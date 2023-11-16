@@ -1,0 +1,78 @@
+<!--same header as products.html-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank you for ordering!</title>
+
+    <!--USING BOOTSTRAP 4 -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel = "stylesheet" href ="style.css">
+
+    <!--send get request to server for ./products.js-->
+    <script src="./products.js"></script>
+</head>
+<body>
+    <h1>BR Fret Shop || Invoice</h1>
+    <!--nav bar-->
+    <div id="sticky-navbar">
+        <nav class="navbar navbar-expand-sm bg-light navbar-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src= "/images/BR Fret Shop Logo 1 copy.jpeg " alt="" width="100" height="80">
+                  </a>
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link active" href="./index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./products_display.html">Products</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          
+    </div>
+
+</head>
+<body>
+    
+    
+    </div>
+
+    <div class="container">
+        <br>
+        <br>
+
+        <!-- INVOICE TABLE -->
+        <table class="table">
+            <thead style="background-color: #de7b11; color: #f7fcff; font-weight: bolder;">
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Make</th>
+                    <th scope="col">Model</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Remaining Inventory</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Extende Price</th>
+                </tr>
+            </thead>
+            <tbody id="invoice_table"></tbody>
+            <tbody id="total_display"></tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="./invoice.js"></script>
+</body>
+</html>
