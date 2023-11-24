@@ -9,7 +9,7 @@ for (let i = 0; i < products.length; i++) {
       <h5 style="float: left;" class="product_name">${products[i].Make}<br>${products[i].Model}<br>${products[i].Year}</h5>
       <h5 style="float: right;">$${(products[i].Price).toFixed(2)}</h5>
   </div>  
-  <img src="${products[i].Image}" class="img-thumbnail" alt="${products[i].alt}">
+  <img src="${products[i].Image}" class="img" alt="${products[i].alt}">
   <div style="height: 90px;">
       <table style="width: 100%; text-align: center; font-size: 18px;" id="product_table">
           <tr>
