@@ -7,7 +7,8 @@
         "Year": "1974",
         "Image": "./images/1974_Stratocaster.webp",
         "Price": 1500.00,
-        "qty_available": 10
+        "qty_available": 100,
+        "qty_sold": 0
     },
     {
         "Make": "Gibson",
@@ -15,7 +16,8 @@
         "Year": "1977",
         "Image": "./images/1977_LesPaul.jpeg",
         "Price": 7889.00,
-        "qty_available": 7
+        "qty_available": 100,
+        "qty_sold": 0
     },
     {
         "Make": "RickenBacker",
@@ -23,7 +25,8 @@
         "Year": "1976",
         "Price": 3298.44,
         "Image": "./images/RickenBacker_1976.webp",
-        "qty_available": 5
+        "qty_available": 100,
+        "qty_sold": 0
     },
     {
         "Make": "Martin",
@@ -31,7 +34,8 @@
         "Year": "1952",
         "Image": "./images/1952_Martin.jpeg",
         "Price": 24898.00,
-        "qty_available": 1
+        "qty_available": 100,
+        "qty_sold": 0
     },
     {
         "Make": "Gibson",
@@ -39,6 +43,7 @@
         "Year": "1963",
         "Image": "./images/GibsonSunburst.jpeg",
         "Price": 14998,
-        "qty_available": 2
+        "qty_available": 100,
+        "qty_sold": 0
     }
 ]

@@ -1,4 +1,67 @@
 
+// Get the URL
+let params = (new URL(document.location)).searchParams;
+
+window.onload = function() {
+  /* If there is a server side validation error
+  Display message to user and allow them to edit their inputs
+  User input is made sticky by retrieving quantities from the URL 
+  Those inputs are validated by isNonNegInt again */
+
+  if (params.has('error')) {
+     
+      document.getElementById('errMsg').innerHTML = "No quantities selected.";
+      setTimeout(() => {
+          document.getElementById('errMsg').innerHTML = "";
+      }, 2000);
+  } 
+  else if (params.has('inputErr')) {
+      document.getElementById('errMsg').innerHTML = "Please fix errors before proceeding."
+      setTimeout(() => {
+          document.getElementById('errMsg').innerHTML = "";
+      }, 2000);
+
+      for (let i in products) {
+          if (params.get(`qty${i}`) == 0) {
+              qty_form[`qty${i}_entered`].value = '';
+          } else {
+              qty_form[`qty${i}_entered`].value = params.get(`qty${i}`);
+              qty_form[`qty${i}_entered`].parentElement.style.borderColor = "red";
+          }
+          errors = isNonNegInt(params.get(`qty${i}`), true)
+          document.getElementById(`qty${i}_error`).innerHTML = errors.join('');  
+      }
+  }
+  //Assignment2 adds personalization and sticky values
+  //add personalization. make sure html has 'helloMsg' This will run when user presses continue button and sent back to products page
+  if(params.has('name')){
+    document.getElementById('helloMsg').innerHTML = `Thank you ${name}, we appreciate you supporting our small business!`;
+    for (let i in products) {
+        qty_form[`qty${i}`].value =params.get(`qty${i}`);
+        //need to add params.to repopulate the quantities when user is sent back to products page.  it needs to be sticky.
+    }
+  }
+}
+//Make sure user doesn't go to invoice directily, instead user needs to go to login. 
+
+//send the quantity data onto the login as opposed to the invoice
+//adding this in Assignment 2, apparently it was supoosed to be there in assignment1, now the products page doesn't work. 
+app.post("/process_purchase", function (request, response){
+    let POST = request.body;
+    let has_qty= false;
+    let errorObject ={};
+
+    for (let i in products) {
+        let qty = has_qty || (qty>0);
+
+        let erroMessages = validateQuantity(qty, products[i].qty_available);
+
+        if (errorMessages.length >0) {
+            errorObject[`qty${[i]}_error`] = errorMessages.join(', ');
+        }
+    }
+})
+
 //Creating a loop to display product data to html
 // Assuming products is an array of objects with properties like Make, Model, Price, Image, availableQuantity
 
@@ -121,40 +184,5 @@ function stickyNav() {
       navbar.classList.add("sticky")
   } else {
       navbar.classList.remove("sticky");
-  }
-}
-
-// Get the URL
-let params = (new URL(document.location)).searchParams;
-
-window.onload = function() {
-  /* If there is a server side validation error
-  Display message to user and allow them to edit their inputs
-  User input is made sticky by retrieving quantities from the URL 
-  Those inputs are validated by isNonNegInt again */
-
-  if (params.has('error')) {
-     
-      document.getElementById('errMsg').innerHTML = "No quantities selected.";
-      setTimeout(() => {
-          document.getElementById('errMsg').innerHTML = "";
-      }, 2000);
-  } 
-  else if (params.has('inputErr')) {
-      document.getElementById('errMsg').innerHTML = "Please fix errors before proceeding."
-      setTimeout(() => {
-          document.getElementById('errMsg').innerHTML = "";
-      }, 2000);
-
-      for (let i in products) {
-          if (params.get(`qty${i}`) == 0) {
-              qty_form[`qty${i}_entered`].value = '';
-          } else {
-              qty_form[`qty${i}_entered`].value = params.get(`qty${i}`);
-              qty_form[`qty${i}_entered`].parentElement.style.borderColor = "red";
-          }
-          errors = isNonNegInt(params.get(`qty${i}`), true)
-          document.getElementById(`qty${i}_error`).innerHTML = errors.join('');  
-      }
   }
 }

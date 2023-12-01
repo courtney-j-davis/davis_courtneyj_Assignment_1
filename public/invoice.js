@@ -1,3 +1,18 @@
+/*ADD personalization, "Thank you Mary, for shopping"
+Add choice 1:an option to go back to shopping once logged in and stay logged in,
+         Need sticky values in product display
+         Add a button "continue shopping"
+    Choice 2: send back to product display but log out. 
+                no user sticky data for user id and values purchased
+                ass a button "logout"
+Add Logout functionality aafter purchase validation
+         
+
+
+*/
+
+
+
 // Get the URL
 let params = (new URL(document.location)).searchParams;
 
@@ -14,6 +29,8 @@ window.onload = function() {
                 <h4>Return to <a href="index.html">Home</a></h4> 
             </body>
         `)
+    }else {  //assignment 2 addition that personalizes shopping experience.
+        document.getElementById('helloMsg').innerHTML = `Thank you ${params.get('name')}!`
     }
 }
 
@@ -84,3 +101,4 @@ document.querySelector('#total_display').innerHTML += `
         <td><b>$${total.toFixed(2)}</td>
     </tr>
 `;
+
