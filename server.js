@@ -43,10 +43,10 @@ function validateQuantity(quantity, availableQuantity) {
 
 /*Assignment 2*/
 //if there are input errors, redirect the user back to product display and display the errors
-response.redirect(`./products_display.html?error`)
+//response.redirect(`./products_display.html?error`)
 
 //If there are no input errors, redirect the user to the login page instead of the invoice.
-response.redirect(`./login.html?${params.toString()}`);
+//response.redirect(`./login.html?${params.toString()}`);
  };
 /*
     Tis means that the quantities the user selected will have to be stored and sent to every page subsequent of products_display
@@ -56,7 +56,8 @@ response.redirect(`./login.html?${params.toString()}`);
 
 let user_data;// defining a global variable to store my user data can be used in all the functions and route,
 const fs=require ('fs'); //this is from Lab 14
-const filename= '/user_data.json';
+const { URLSearchParams } = require('url');
+const filename= __dirname + '/user_data.json';
 if(fs.existsSync(filename)){
     let data =fs.readFileSync(filename, 'utf-8');
     user_data =JSON.parse(data);
@@ -110,7 +111,7 @@ app.post('/purchase_logout', function (request, response) {
     delete temp_user['email'];
     delete temp_user['name'];
 
-    response.redirect('/products.html');
+    response.redirect('/products_display.html');
 });
 
 
@@ -164,35 +165,121 @@ if (has_qty == false && Object.keys(errorObject).length ==0 ) {
 
 
 //Assignment 2
+//Adding a route to incorporate the the user_data.json file for the process_login
+const user_data_filename = '/user_data.json';
+let user_data;
 
-app.post ('/process_login'),function (request, response) {
+if (fs.existsSync(user_data_filename)) {
+    let data = fs.readFileSync(user_data_filename, 'utf-8');
+    user_data = JSON.parse(data);
+    console.log(user_data);
+} else {
+    console.log(`${user_data_filename} does not exist.`);
+    user_data = {};
+}
+
+
+
+app.post('/process_login', function (request, response) {
     let POST = request.body;
     let entered_email = POST['email'].toLowerCase();
     let entered_password = POST['password'];
 
-    if(entered_email.length == 0 && entered_password == 0){
-        request.query.loginErr = 'Email address & password are both required.'
+    if (entered_email.length === 0 && entered_password === 0) {
+        request.query.loginErr = 'Email address & password are both required.';
     } else if (user_data[entered_email]) {
-            if (user_data[entered_email].password ==entered_password){
-                temp_user['email'] = entered_email;
-                temp_user['name'] = user-data[entered_email].name;
+        if (user_data[entered_email].password === entered_password) {
+            temp_user['email'] = entered_email;
+            temp_user['name'] = user_data[entered_email].name;
 
-                console.log (temp_user);
+            console.log(temp_user);
 
-                let params = new URLSearchParams(temp_user);
-                response.redirect(`/invoice.html?valid&${params.toString()}`);
-                return;
-            } else if (entered_password ==0) {
-                request.query.loginErr = 'Password cannot be blank';
-            } else {
-                request.query.loginErr= 'Incorrect password';
-            } 
+            let params = new URLSearchParams(temp_user);
+            response.redirect(`/invoice.html?valid&${params.toString()}`);
+            return;
+        } else if (entered_password === 0) {
+            request.query.loginErr = 'Password cannot be blank';
         } else {
-            request.query.loginErr = 'Invalid email';
+            request.query.loginErr = 'Incorrect password';
         }
+    } else {
+        request.query.loginErr = 'Invalid email';
     }
+
     request.query.email = entered_email;
-    //in the request query have it equal to the email parameter and send alon in the URL 
     let params = new URLSearchParams(request.query);
     response.redirect(`login.html?${params.toString()}`);
-});
+})})
+
+let registration_errors = {};
+
+app.post('/process_register', function (request, response){
+    //get user input
+    let reg_name =request.body.name;
+    let reg_email = request.body.email.toLowerCase();
+    let reg_psw = request.body.password;
+    let reg_confirm_psw = request.body.confirm_password 
+
+    //email validation
+    //name validation
+    //password validation
+    
+    
+    //make sure passwords match
+    validateConfirmPassword(reg_confirm_psw, reg_psw); 
+
+    //server response..checking if there are no errors. 
+    if (Object.keys(regitration_errors).length ==0) {
+        //make a new object in the user_data object
+        user_data[reg_email] = {};
+        user_data[reg_email].name = reg_name;
+        user_data[reg_email].password = reg_psw;
+
+     // Asynchronosuly write the updated user_data and products to their respective files
+     fs.writeFile(__dirname + '/user_data.json', JSON.stringify(user_data), 'utf-8', (err)=> 
+        {
+        if (err) {
+            console.error('Error updating usere data:', err);
+            //consider editing this for my personal preference to where I want to send an error response. 
+
+        } else {
+            console.log('User data has been updated!')
+        //add the user's info into temp_infor
+            temp_user['name']= reg_name;
+            temp_user['email']= reg_email;
+
+        console.log(temp_user);
+        console.log(user_data);
+        
+        let params = new URLSearchParams(temp_user);
+        response.redirect(`/invoice.html?regSuccess&vallid&${params.toString()}`);
+        } 
+        });
+    } else //there are errors from vallidation and stored in registration_errors
+    {
+        delete request.body.password;
+        delete request.body.confirm_password;
+
+        let params = new URLSearchParams(request.body);
+        response.redirect(`/register.html?${params.String()& $(qs.stringify(regitration_errors))}`);
+    }
+    
+  
+  })
+
+  function validateConfirmPassword(reg_confirm_psw, reg_psw); {
+    // delete previous errors. 
+    delete registration_errors['confirm_password_type'];
+    
+    console.log(registration_errors);
+
+    // Check if the password and repeat password match
+    if (reg_psw !== reg_confirm_psw) {
+      registration_errors['confirm_password_type']= 'Password and Repeat Password do not match.';
+    }
+  
+   
+  }
+
+   // If the passwords match, you can proceed with form submission or other actions
+   //document.getElementById('register-form').submit();

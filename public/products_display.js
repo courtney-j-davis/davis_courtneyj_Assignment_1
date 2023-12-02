@@ -1,5 +1,6 @@
 
 // Get the URL
+
 let params = (new URL(document.location)).searchParams;
 
 window.onload = function() {
@@ -45,7 +46,7 @@ window.onload = function() {
 //Make sure user doesn't go to invoice directily, instead user needs to go to login. 
 
 //send the quantity data onto the login as opposed to the invoice
-//adding this in Assignment 2, apparently it was supoosed to be there in assignment1, now the products page doesn't work. 
+/*adding this in Assignment 2, apparently it was supoosed to be there in assignment1, now the products page doesn't work. 
 app.post("/process_purchase", function (request, response){
     let POST = request.body;
     let has_qty= false;
@@ -60,7 +61,7 @@ app.post("/process_purchase", function (request, response){
             errorObject[`qty${[i]}_error`] = errorMessages.join(', ');
         }
     }
-})
+})*/
 
 //Creating a loop to display product data to html
 // Assuming products is an array of objects with properties like Make, Model, Price, Image, availableQuantity
@@ -120,7 +121,8 @@ function incrementQty(inputId) {
 }
 
 // PERFORM CLIENT-SIDE DATA VALIDATION
-function isNonNegInt(q, returnErrors = false) {
+//------Sal's Code------->
+/*function isNonNegInt(q, returnErrors = false) {
   errors = []; 
   if ((Number(q) != q) && (q != '')) { 
       errors.push('Please enter a number value.');
@@ -146,7 +148,37 @@ function isNonNegInt(q, returnErrors = false) {
       }
   }
   return (returnErrors ? errors : (errors.length == 0));
-}
+}*/
+
+//------My Code--------->
+//validate the quantity, returns a string if not a number, negative, not an integer, or a combination of both
+    function validateQuantity(quantity){
+        //set variables, and grab number from the quantity and set it to an number
+        let errMsg = '';
+        let quantityNumber = Number(quantity.value);
+        //console.log(Number.isInteger(quantityNumber));
+        document.getElementById(`invalidQuantity${quantity.id}`).innerHTML = "errorMessage";
+        //console.log(products[quantity.id]['qty_available']);
+        //gets validation message if not a number, negative, not an integer, or if there is not enough items in stock
+        //else  empty string 
+        if(isNaN(quantityNumber)){
+            errMsg = "Please Enter a Number";
+        }else if (quantityNumber<0 && !Number.isInteger(quantityNumber)){
+            errMsg = "Please Enter a Positive Integer";
+        }else if (quantityNumber <0){
+            errMsg = "Please Enter a Positive Value";
+        }else if(!Number.isInteger(quantityNumber)){
+            errMsg = "Please Enter an Integer";
+        }else if(quantityNumber > products[quantity.id]['qty_available']){
+            errMsg = "Not Enough Items in Stock!";
+        }
+        else{
+            errMsg = '';
+        }
+        //set the errMsg to the innerHTML 
+        document.getElementById(`invalidQuantity${quantity.id}`).innerHTML = errMsg;
+        //console.log(products[quantity.id])
+    }
 
 // CHECK INPUT BOXES AGAINST DATA VALIDATION FUNCTION
 // Remove leading 0's
@@ -166,6 +198,15 @@ function checkInputTextbox(textBox) {
   }
   
 };
+//-----Assignment 2 AR------>
+//check is the user is logged in
+let loginCurrent = validateLogin ();
+if (loginCurrent) {
+    handleFormSubmission ();
+} else {
+    //if user it not logged in, redirect to the login page
+    window.location.href = '/login.html';
+}
 
 
 // STICKY NAV BAR: Referenced from https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
@@ -186,3 +227,4 @@ function stickyNav() {
       navbar.classList.remove("sticky");
   }
 }
+
