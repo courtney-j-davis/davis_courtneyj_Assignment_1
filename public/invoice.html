@@ -54,14 +54,22 @@
             <tbody id="total_display"></tbody>
         </table>
         <!--This is a form to contain 2 buttons, one to logout, one to continue shopping.-->
-        <div class="buttons-container">
-            <form name="invoice" method="POST"></form>
-                <input class="sm-button-highlight" type="submit" value="Continue Shopping"
-                name="Continue" onclick="invoice.action= '/continue_shopping'" style="width: 40%" >
-                <input class="sm-button-highlight" type="submit" value="Purchase Now"
-                name="Continue" onclick="invoice.action = '/purchase_logout'" style="width: 40%;" >
-        </div>
-    </div>
+        <div class = "buttons-container">
+            <form name = "invoice" method = "POST">
+              <div class="button-wrapper">
+              <input class = "sm-button-highlight" type = "submit" value = "Continue Shopping" name = "continue" onclick = "invoice.action='/continue_shopping'" style = "width: 40%">
+              
+              </div>
+          
+              <div class="button-wrapper2">
+                    <input class = "sm-button-highlight" type = "submit" value = "Complete Purchase" name = "logout" onclick = "invoice.action='/purchase_logout'" style = "width: 40%">
+                     <div class="popup" onclick="completePurchase()">Complete Purchase
+                    <span class="popuptext" id="myPopup">Thank you for shopping with us!</span>
+              </div>
+              </div>
+            </form>
+          </div>
+          
 
     
 </body>

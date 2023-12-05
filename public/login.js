@@ -3,12 +3,7 @@
 //Sal's code
 /*let params = (new URL(document.location)).searchParams;
 
-window.onload = function(){
-    //if there is a log in error that means there was an invalid email/paswword input
-    if (params.has('loginErr')) {
-        //after window loads, get the value form key 'loginError' and dis[lay it in errorMessage
-        document.getElementById('errMsg').innerHTML = params.get('loginErr')
-    }
+
     //this pastes the error into the div and it will keep your email so you don't have to keep typing it: It's sticky!
     document.getElementById('email').value = params.get('email');
 }*/
@@ -22,7 +17,8 @@ window.onload = function () {
         // Display the login error message
         document.getElementById('errMsg').innerHTML = params.get('loginErr');
     }
-
+   
+    document.getElementById('email').value = params.get('email');
     // Check if there is a valid parameter indicating a successful login
     if (params.has('valid')) {
         // Get user information from URL parameters
@@ -30,7 +26,7 @@ window.onload = function () {
         let userName = params.get('name');
 
         // Display a welcome message
-        document.getElementById('welcomeMsg').innerHTML = `Welcome, ${userName}!`;
+        document.getElementById('welcomeMsg').innerHTML = `Welcome, ${name}!`;
 
         // Perform additional actions for a successful login
         
@@ -52,3 +48,4 @@ function showPassword () {
         x.type = "password";
     }
 }
+

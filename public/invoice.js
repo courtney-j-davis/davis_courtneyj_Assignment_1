@@ -30,9 +30,20 @@ window.onload = function() {
             </body>
         `)
     }else {  //assignment 2 addition that personalizes shopping experience.
-        document.getElementById('helloMsg').innerHTML = `Thank you ${params.get('name')}!`
+        document.getElementById('helloMsg').innerHTML = `Thank you ${params.get('name')}!`;
     }
 }
+/*function completePurchase() {
+    let popupWrapper = document.getElementById("popupWrapper");
+    popupWrapper.classList.toggle("show");
+    setTimeout(function (){
+        popupWrapper.classList.remove("show");
+    }, 200000);
+    // You can keep your existing logic for redirecting to '/purchase_logout'
+    document.invoice.action = '/purchase_logout';
+    document.invoice.submit();
+}*/
+
 
 let subtotal = 0;
 
@@ -50,7 +61,7 @@ for (let i in qty) {
 
     document.querySelector('#invoice_table').innerHTML += `
         <tr style="border: none;">
-            <td width="10%"><img src="${products[i].Image}" alt="${products[i].alt}" class="img-thumbnail" style="border-radius: 5px; width: 10px; height: 15px;"></td>
+            <td width="10%"><img src="${products[i].Image}" alt="${products[i].alt}" class="img" style="border-radius: 5px; width: 50px; height: 70px;"></td>
             <td>${products[i].Make}</td>
             <td>${products[i].Model}</td>
             <td>${products[i].Year}</td>

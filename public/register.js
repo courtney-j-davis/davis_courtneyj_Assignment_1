@@ -1,5 +1,5 @@
 /* 
-Validation of Regitration Information
+Validation of registration Information
 Name:
     use function validateName 
         (make sure its letters not numbers)
@@ -22,8 +22,8 @@ window.onload = function(){
     let register_form = document.forms['register_form'];
 
     //get the values from the login URL and place in register form. Sticky part
-    register_form.elements['name'].vlue = params.get('name'); 
-    register_form.elements['email'].vlue = params.get('email'); 
+    register_form.elements['name'].value = params.get('name'); 
+    register_form.elements['email'].value = params.get('email'); 
 
     //get error messages. 
 
@@ -39,7 +39,7 @@ function validatePassword() {
 //let password = document.forms ['registration_form']['password'].value;
 
 //validate password requirments and complexity,
-let myInput = document.getElementById("psw");
+let myInput = document.getElementById("password");
 let letter = document.getElementById("letter");
 let capital = document.getElementById("capital");
 let number = document.getElementById("number");
@@ -95,7 +95,7 @@ myInput.onkeyup = function() {
     length.classList.remove("valid");
     length.classList.add("invalid");
   }
-}
+}}
   
 /*----client side validation making sure passwords match, this optional, consider deleting. 
 
@@ -113,25 +113,3 @@ myInput.onkeyup = function() {
   document.getElementById('register-form').submit();
 }*/
 
-
-
-//------------------------------------------------Function validateName---------------------------------------------------------------
-function validateName(name) {
-  // Regular expression to match only letters
-  let letterRegex = /^[A-Za-z]+$/;
-
-  // Check if the name contains only letters
-  if (letterRegex.test(name)) {
-    return true; // Name is valid
-  } else {
-    return false; // Name contains numbers or other characters
-  }
-}
-
-// Example usage:
-let userName = "JohnDoe";
-if (validateName(userName)) {
-  console.log("Name is valid.");
-} else {
-  console.log("Name is not valid. Please use only letters.");
-}}
