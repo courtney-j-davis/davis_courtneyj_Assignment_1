@@ -185,6 +185,7 @@ app.post('/purchase_logout', function (request, response) {
 app.post("/process_purchase", function (request, response) {
     //POST content of the request route
     let POST = request.body;
+    let username = request.body[`username`];
     //Initialize a variable has_qty as false (no quantities initially)
     //Assume that input boxes are all empty. If nothing is selected, validation will stop there and an error message will ensue. 
     let has_qty = false;
@@ -271,10 +272,14 @@ app.post('/process_login', function (request, response) {
         request.query.loginErr = 'Email address & password are both required.';
     }   else if (user_data[entered_email]) {
         if (user_data[entered_email].password === entered_password) {
-            temp_user['email'] = entered_email;
-            temp_user['name'] = user_data[entered_email].name;
+            //store the user name and email in the cookie. 
+            let user_cookie= {"email": entered_email, "name": user_data[entered_email]['name']}
+            
+            response.cookie('user_cookie', JSON.stringify(user_cookie), (macAge: 900 * 1000));
+            console.log(user_cookie);
+            
+            //Redirect to
 
-            console.log(temp_user);
 
             let params = new URLSearchParams(temp_user);
             response.redirect(`/invoice.html?valid&${params.toString()}`);
@@ -292,10 +297,11 @@ app.post('/process_login', function (request, response) {
     //this puts the enetered email into the URL(params)
     let params = new URLSearchParams(request.query);
     response.redirect(`login.html?${params.toString()}`);
+
 })
 
 
- const registration_errors = [];
+ const registration_errors = {};
 app.post('/process_register', function (request, response) {
     //get user input
     
@@ -303,55 +309,18 @@ app.post('/process_register', function (request, response) {
     let reg_email = request.body.email.toLowerCase();
     let reg_password = request.body.password;
     let reg_confirm_password = request.body.confirm_password 
+//_________________Validations Needed for A2_________________//
+    // Validations for registration
+    validateEmail(reg_email);
+    
 
-   
-    //-----------EMAIL VALIDATION----------------//
-    //--<-- the email exists---------------//
-    const existingEmail = Object.keys(reg_email).find(
-        (email) => email.toLowerCase() === request.body.email.toLowerCase()
-      );
-    
-    if (existingEmail) {
-      registration_errors.push (`Email Address,${reg_email} Already Exists! `);
-    }
-    //----<-- email formatting requirements------//
-    let emailRegx =  /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
-    if (!emailRegx.test(reg_email))  {registration_errors.push("Invalid email format"); 
-    }
-    //------------NAME VALIDATION---------------//
-    let nameRegex = /^[a-zA-Z]{30}$/;
-if (!nameRegex.test(reg_name)) {
-    registration_errors.push("Name should only contain letters");
-    }
-    //----------password validation--------------//
-    function validateConfirmPassword(reg_confirm_password, reg_password) {
-        // delete previous errors. 
-        delete registration_errors['confirm_password_type'];
-        
-        console.log(registration_errors);
-    
-        // Check if the password and repeat password match
-        if (reg_password !== reg_confirm_password) {
-          registration_errors['confirm_password_type']= 'Password and Repeat Password do not match.'
-        }
-      
-       
-      }
-      function hashPassword (password) {
-        let hash = crypto.createHash ('sha256');
-        hash.update(password);
-        return hash.digest('hex');
-      }
-    
-    //make sure passwords match
-    validateConfirmPassword(reg_confirm_password, reg_password)
-
-    //server response..checking if there are no errors. 
+    //--------NO ERRORS------------server response..checking if there are no errors. 
     if (Object.keys(registration_errors).length ==0) {
         //make a new object in the user_data object
         user_data[reg_email] = {};
         user_data[reg_email].name = reg_name;
-        user_data[reg_email].password = reg_password;
+        user_data[reg_email].password = encrypt(reg_password);
+        user_data[reg_email].loggedIn= true;
 
      // Asynchronosuly write the updated user_data and products to their respective files
      fs.writeFile(__dirname + '/user_data.json', JSON.stringify(user_data), 'utf-8', (err)=> {
@@ -364,23 +333,133 @@ if (!nameRegex.test(reg_name)) {
         //add the user's info into temp_user
             temp_user['name']= reg_name;
             temp_user['email']= reg_email;
-            console.log(temp_user);
-            console.log(user_data);
-        
+            
+
+        //this makes the current logged in useres sticky
         let params = new URLSearchParams(temp_user);
         response.redirect(`/invoice.html?regSuccess&valid&${params.toString()}`);
-        } 
-        })
+        }
+    });
     } else //there are errors from validation and stored in registration_errors
     {
         delete request.body.password;
         delete request.body.confirm_password;
+//stays the same for A3
+        let params = new URLSearchParams(Object.entries(request.body));
+        let redirectURL = `/register.html?${params.toString()}&${qs.stringify(registration_errors)}`;
 
-        let params = new URLSearchParams(request.body);
-        response.redirect(`/register.html?${params.toString() & $(qs.stringify(registration_errors))}`);
+        // Redirect to the constructed URL
+        response.redirect(redirectURL);
     }
-  
-});  
+//-----------EMAIL VALIDATION----------------//
+function validateEmail(email) {
+    delete registration_errors['email'];
+
+    // Email format requirements
+    let emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    if (!emailRegex.test(email)) {
+        registration_errors.push("Invalid email format");
+    }
+
+    // Check if the email already exists
+    const existingEmail = Object.keys(user_data).find(
+        (existingEmail) => existingEmail.toLowerCase() === email.toLowerCase()
+    );
+
+    if (existingEmail) {
+        registration_errors.push(`Email Address ${email} Already Exists!`);
+    }
+    console.log('Email Exists');
+}
+
+
+//------------NAME VALIDATION---------------//
+// display error message when the name is empty
+if (request.body.name == "") {
+    errors['name'].push('The name is invalid. Please insert a name.');
+}
+// character limitations (only letters) (ChatGPT)
+if (/^[A-Za-z]+ [A-Za-z]+$/.test(request.body.name)) {
+} else {  // error message when name doesn't follow character guidelines
+    errors['name_format'].push('Please follow the format FirstName LastName!')
+}
+// the users full name should only allow letters, no more than 30 characters
+if (request.body.name.length > 30) { // execute errors if the name surpassed limit
+    errors['name'].push('The name is too long. Insert a name less than 30 characters.');
+}
+// error for when username is already taken
+if (typeof users_reg_data[register_user] != 'undefined') { 
+    errors['name'].push('Username is taken. Please use a different username.');
+}
+
+if (registration_errors.length > 0) {
+    // Convert errors to a JSON string
+    const errorsJSON = JSON.stringify({ errors: registration_errors });
+
+    // Redirect to the register.html page with errors in the query string
+    response.redirect(`/register.html?${errorsJSON}`);
+} else {
+    // No errors, proceed with registration
+    // Your existing registration code...
+}
+});
+
+//----------password validation--------------//referenced from stack overflow
+    function validateConfirmPassword(reg_confirm_password, reg_password) {
+        // delete previous errors. 
+        delete registration_errors['confirm_password_type'];
+        
+        console.log(registration_errors);
+    
+        // Check if the password and repeat password match
+        if (reg_password !== reg_confirm_password) {
+          registration_errors['confirm_password_type']= 'Password and Repeat Password do not match.'
+        } else {
+            console.log('Passwords Match!');
+       
+      }}
+      function hashPassword (password) {
+        let hash = crypto.createHash ('sha256');
+        hash.update(password);
+        return hash.digest('hex');
+      }
+    
+    
+   app.post('/add_to_cart', function (request, response){
+
+
+
+
+
+
+
+
+   })
+app.post('/update_shopping_cart', function(request, response){
+    let POST = request.body;
+
+    let products_key = POST['products_key'];
+//looping through the dif product keys and putting into session cart. this resides in the cart. 
+    for (products_key in request.session.cart){
+        for (let i in request.session.cart[products_key]) {
+            request.session.cart[products_key][i] = Number(request.body[`cartInput_${products_key}${i}`]);
+        }
+    }
+    response.redirect('/cart.html');
+})
+ //This is used to cliccking on logout but then change mind go to products page.  
+app.post('/continue', function(request, response){
+    response.redirect(`/products.html?`);
+})
+
+app.post(`/checkout`, function(request, response){
+    if (typeof request.cookies['user_cookie']== 'undefined') {
+        response.redirect(`/login.html?`)
+    } else {
+        response.redirect(`/invoice.html?valid`);
+    }
+})
+
 
    // If the passwords match, you can proceed with form submission or other actions
 
@@ -400,4 +479,31 @@ app.post("/complete_purchase", function (request, response) {
         loginUsers.pop(reg_name);
         console.log(loginUsers);
     response.redirect('/products_display.html?&thankYou=true');
-});
+})
+
+app.post('/process_logout', function (request, response){
+        let cookie = JSON.parse(request.cookies['user_cookie']);
+
+        let email = cookie['email'];
+
+        if (user_data [email]&& user_data[email].status == true) {
+            //remove user status------need to put div in HTML for user status
+            delete status[email];
+
+            user_data[email].status = false
+
+            response.clearCookie("user_cookie");
+
+            request.session.users = Object.keys(status.length);
+
+            fs.writeFile(filename, JSON.stringify(user_data), 'utf-8', (err) => {
+                if (err) {
+                    console.error('Error updating user data:', err);
+                } else{
+                    console.log///follow up with the rest of the code. 
+                }
+            })
+        }
+
+    
+})
