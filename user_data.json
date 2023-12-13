@@ -1,1 +1,19 @@
-{"cvalley@hawaii.edu":{"name":"Courtney","password":"Password123"},"courtneydavis808@me.com":{"name":"Courtney","password":"Password123"},"bob@bob.com":{"password":"Password123"},"davis@email.com":{"password":"Password123"}}
+{
+    "cvalley@hawaii.edu":{
+        "name":"Courtney",
+        "password":"Password123",
+        "status":false
+    },
+    "courtneydavis808@me.com":{
+        "name":"Courtney",
+        "password":"Password123",
+        "status": false
+    },
+
+    "itm352@uh.edu":{
+        "name": "ITM 352", 
+        "password":"grader",
+        "status":false
+        
+    }
+}

@@ -1,12 +1,4 @@
-/*ADD personalization, "Thank you Mary, for shopping"
-Add choice 1:an option to go back to shopping once logged in and stay logged in,
-         Need sticky values in product display
-         Add a button "continue shopping"
-    Choice 2: send back to product display but log out. 
-                no user sticky data for user id and values purchased
-                ass a button "logout"
-Add Logout functionality aafter purchase validation
-         
+/*g
 
 
 */
@@ -33,44 +25,43 @@ window.onload = function() {
         document.getElementById('helloMsg').innerHTML = `Thank you ${params.get('name')}!`;
     }
 }
-/*function completePurchase() {
-    let popupWrapper = document.getElementById("popupWrapper");
-    popupWrapper.classList.toggle("show");
-    setTimeout(function (){
-        popupWrapper.classList.remove("show");
-    }, 200000);
-    // You can keep your existing logic for redirecting to '/purchase_logout'
-    document.invoice.action = '/purchase_logout';
-    document.invoice.submit();
-}*/
-
-
-let subtotal = 0;
-
-let qty = [];
-
-for (let i in products) {
-    qty.push(params.get(`qty${i}`));
+//If no cookie is detected, send the user to the loin page
+if (getCookie('user_cookie') != false) {
+    user_cookie = getCookie('user_cookie');
+} else {
+    location.href= './login.html';
+    window.stop;
 }
 
-for (let i in qty) {
-    if (qty[i] == 0 || qty[i] == '') continue;
+document.getElementById('verify').innerHTML = `
+    <p>Is this information correct? Please verify before continuing, mahalo.
+    <p>Name: ${user_cookie['name']}</p>
+    <p>Email: ${user_cookie['email']}</p>
+`;
 
-    extended_price = (params.get(`qty${i}`) * products[i].Price).toFixed(2);
-    subtotal += Number(extended_price);
+let subtotal = 0;
+//for loop to puch table to invoice.html getting the value fro the cookies and updating the totals and stuff. 
+for (let products_key in shopping_cart) {
+    for (let i in shopping_cart[products_key]){
+        let qty = shopping_cart[products_key][i];
+        if (qty == 0 || qty == '') continue;
 
-    document.querySelector('#invoice_table').innerHTML += `
-        <tr style="border: none;">
-            <td width="10%"><img src="${products[i].Image}" alt="${products[i].alt}" class="img" style="border-radius: 5px; width: 50px; height: 70px;"></td>
-            <td>${products[i].Make}</td>
-            <td>${products[i].Model}</td>
-            <td>${products[i].Year}</td>
-            <td>${qty[i]}</td>
-            <td>${products[i].qty_available}</td>
-            <td>$${products[i].Price.toFixed(2)}</td>
-            <td>$${extended_price}</td>
-        </tr>
-    `;
+        extended_price = qty * products[products_key][i].Price.toFixed(2);
+        subtotal += Number(extended_price);
+
+        document.querySelector('#invoice_table').innerHTML += `
+            <tr style="border: none;">
+                <td width="10%"><img src="${products[products_key][i].Image}" alt="${products[products_key][i].alt}" class="img" style="border-radius: 5px; width: 50px; height: 70px;"></td>
+                <td>${products[products_key][i].Make}</td>
+                <td>${products[products_key][i].Model}</td>
+                <td>${products[products_key][i].Year}</td>
+                <td>${qty[i]}</td>
+                <td>${products[products_key][i].qty_available}</td>
+                <td>$${products[products_key][i].Price.toFixed(2)}</td>
+                <td>$${extended_price}</td>
+            </tr>
+        `;
+    }
 }
 
 // Sales tax

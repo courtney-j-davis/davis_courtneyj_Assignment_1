@@ -1,14 +1,21 @@
-//login.js
-
 //Sal's code
-/*let params = (new URL(document.location)).searchParams;
 
-
-    //this pastes the error into the div and it will keep your email so you don't have to keep typing it: It's sticky!
+// When the window loads, perfom the following function:
+window.onload = function() {
+    //read in the URL redirect, if there is one
+    let params = (new URL(document.location)).searchParams;
+    // If the key 'loginError' is present, it means that there were no inputs or an invalid email/password
+    if (params.has('loginErr')) {
+        // After the window loads, get the value from key 'loginError' and display it in errorMessage
+        document.getElementById('errMsg').innerHTML = params.get('loginErr')
+    }
     document.getElementById('email').value = params.get('email');
-}*/
 
-//my code
+
+    
+}
+/*
+//my code from A2 which may not work, coming back to this 
 let params = new URLSearchParams(window.location.search);
 
 window.onload = function () {
@@ -26,7 +33,7 @@ window.onload = function () {
         let userName = params.get('name');
 
         // Display a welcome message
-        document.getElementById('welcomeMsg').innerHTML = `Welcome, ${name}!`;
+        document.getElementById('helloMsg').innerHTML = `Welcome, ${'name'}!`;
 
         // Perform additional actions for a successful login
         
@@ -37,7 +44,7 @@ window.onload = function () {
 
     // Populate the email field if available
     document.getElementById('email').value = params.get('email');
-};
+};*/
 
 //-----function to show password while typing. Referenced from w3 schools
 function showPassword () {

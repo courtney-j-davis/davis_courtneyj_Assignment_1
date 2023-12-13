@@ -4,20 +4,20 @@ for (let i = 0; i < products.length; i++) {
     document.querySelector('.row').innerHTML += `
     <div class="col-md-6 product_card" style="margin-bottom: 40px; padding: 15px;">
     <div>
-    <h5 style="float: left;" class="product_name">${products[i].Make}<br>${products[i].Model}<br>${products[i].Year}</h5>
-    <h5 style="float: right;">$${(products[i].Price).toFixed(2)}</h5>
+    <h5 style="float: left;" class="product_name">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</h5>
+    <h5 style="float: right;">$${(products[products_key][i].Price).toFixed(2)}</h5>
 </div>  
-<img src="${products[i].Image}" class="img" alt="${products[i].alt}">
+<img src="${products[products_key][i].Image}" class="img" alt="${products[products_key][i].alt}">
 <div style="height: 90px;">
     <table style="width: 100%; text-align: center; font-size: 18px;" id="product_table">
         <tr>
-            <td style="text-align: left; width: 35%;">Available: ${products[i].qty_available}</td>
-
+            <td style="text-align: left; width: 35%;">Available: ${products[products_key][i].qty_available}</td>
+            
             <td style="text-align: center; width: 35%;" rowspan="2">
             <div style="border-radius: 50px; border: 2px solid black; width: 70%; height: 40px; float: right;">
                 <button type="button" class="qtyButton highlight" onclick="document.getElementById('qty${[i]}_entered').value--; checkInputTextbox(qty${[i]}_entered);">--</button>
 
-                <input type="text" autocomplete="off" placeholder="0" name="qty${[i]}" id="qty${[i]}_entered" class="inputBox" onchange="checkInputTextbox(this)">
+                <input type="text" autocomplete="off" placeholder="0" name="qty${[i]}" id="qty${[i]}_entered" class="inputBox" onkeyup= "checkInputTextbox(this)">
 
                 <button type="button" class="qtyButton highlight" onclick="document.getElementById('qty${[i]}_entered').value++; checkInputTextbox(qty${[i]}_entered);">+</button>
         </div>
@@ -26,7 +26,8 @@ for (let i = 0; i < products.length; i++) {
             </td>
         </tr>
         <tr>
-            <td style="text-align: left; width: 35%;" id="qty_sold${i}">Sold: ${products[i].qty_sold}</td>
+            <td colspan = "3" style = "padding-top: 10px;>
+            <input type= "submit" value= Add to cart" class= "sm-button highlight"></td>
         </tr>
         <tr>
             <td colspan="3" style="padding-top: 5px;"><div id="qty${[i]}_error" style="color: red;"></div></td>
@@ -98,26 +99,6 @@ function checkInputTextbox(textBox, qty_available) {
 }
 
 
-
-// STICKY NAV BAR: Referenced from https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
-window.onscroll = function() {stickyNav()};
-
-// Get the navbar using its id
-let navbar = document.getElementById("sticky-navbar");
-
-// offsetTop returns the top position relative to the parent (documentation: https://www.w3schools.com/jsref/prop_element_offsettop.asp)
-    // The parent of navbar is body
-let sticky = navbar.offsetTop;
-
-function stickyNav() {
-    // pageYOffSet returns the pixels a document has scrolled from the upper left corner of the window
-    if (window.pageYOffset >= sticky) {
-        navbar.classList.add("sticky")
-    } else {
-        navbar.classList.remove("sticky");
-    }
-}
-
 // Get the URL
 let params = (new URL(document.location)).searchParams;
 
@@ -160,6 +141,18 @@ window.onload = function() {
             }
         }
     }
+    //making the input sticy using the cookie
+    if ((typeof shopping_cart[products_key] != 'undefined') && (params.has('inputErr') != true)) {
+        for (let i in shopping_cart[products_key]) {
+            if (shopping_cart[products_key][i] == 0) {
+                document.getElementById(`qty${[i]}`).value = '';
+            } 
+            else {
+                document.getElementById(`qty${[i]}`).value = shopping_cart[products_key][i];
+            }
+        }
+    }
+}
 
     
 
@@ -169,6 +162,6 @@ window.onload = function() {
         for (let i in products){
             qty_form[`qty${i}`].vale =params.get(`qty${i}`);
         }
-        document.getElementById("login_user_number").innerHtml = login_user.length;
+        document.getElementById("login_status").innerHtml = login_user.length;
     }
-}   
+  

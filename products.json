@@ -1,1 +1,154 @@
-[{"Make":"Fender","Model":"Stratocaster","Year":"1974","Image":"./images/1974_Stratocaster.webp","Price":1500,"qty_available":97,"qty_sold":3},{"Make":"Gibson","Model":"Les Paul Standard Tobacco Burst","Year":"1977","Image":"./images/1977_LesPaul.jpeg","Price":7889,"qty_available":99,"qty_sold":1},{"Make":"RickenBacker","Model":"4001","Year":"1976","Price":3298.44,"Image":"./images/RickenBacker_1976.webp","qty_available":97,"qty_sold":3},{"Make":"Martin","Model":"D-28 Natural","Year":"1952","Image":"./images/1952_Martin.jpeg","Price":24898,"qty_available":96,"qty_sold":4},{"Make":"Gibson","Model":"J-160E Sunburst","Year":"1963","Image":"./images/GibsonSunburst.jpeg","Price":14998,"qty_available":90,"qty_sold":10}]
+
+    { 
+        "Electric Guitars": [
+            {
+                "Make":"Fender",
+                "Model":"Stratocaster",
+                "Year":"1974",
+                "Image":"./images/1974_Stratocaster.webp",
+                "Price":1500,
+                "qty_available":97,
+                "qty_sold":3
+            },
+            {
+                "Make":"Gibson",
+                "Model":"Les Paul Standard Tobacco Burst",
+                "Year":"1977",
+                "Image":"./images/1977_LesPaul.jpeg",
+                "Price":7889,
+                "qty_available":99,
+                "qty_sold":1
+            },
+            {
+                "Make":"RickenBacker",
+                "Model":"4001",
+                "Year":"1976",
+                "Price":3298.44,
+                "Image":"./images/RickenBacker_1976.webp",
+                "qty_available":97,
+                "qty_sold":3
+            },
+            {
+                "Make":"Gibson",
+                "Model":"ES-330TD Cherry",
+                "Year":"1965",
+                "Image":"./images/GibsonES-330TD.png",
+                "Price":16498,
+                "qty_available":100,
+                "qty_sold":0
+            },
+            {
+                "Make":"PRS",
+                "Model": "Custom 24",
+                "Year": "2023",
+                "Image": "./images/Eriza_Verde.png",
+                "Price": 4690,
+                "qty_available": 100,
+                "qty_sold": 0
+            },
+            {
+                "Make":"Fender",
+                "Model": "Telecaster",
+                "Year": "1974",
+                "Image":"./Fender_Telecaster.png",
+                "qty_available": 100,
+                "qty_sold":0
+            }
+        ],
+
+        "Acoustic Guitars": [
+            {
+                "Make":"Martin",
+                "Model":"D-28 Natural",
+                "Year":"1952",
+                "Image":"./images/1952_Martin.jpeg",
+                "Price":24898,
+                "qty_available":96,
+                "qty_sold":4
+            },
+            {
+                "Make":"Gibson",
+                "Model":"J-160E Sunburst",
+                "Year":"1963",
+                "Image":"./images/GibsonSunburst.jpeg",
+                "Price":14998,
+                "qty_available":90,
+                "qty_sold":10
+            },
+            {
+                "Make":"Gibson",
+                "Model":"SJN Country Western",
+                "Year":"1964",
+                "Image":"./images/Gibson1964.png",
+                "Price":8989,
+                "qty_available":100,
+                "qty_sold":0  
+            },
+            {
+                "Make":"Gibson",
+                "Model":"L-00 Untouched Sunburst",
+                "Year":"1933",
+                "Image":"./images/1933Gibson.png",
+                "Price":9998,
+                "qty_available":100,
+                "qty_sold":0
+            },
+            {
+                "Make":"Martin",
+                "Model":"000-18 Natural",
+                "Year":"1954",
+                "Image":"./images/Martin_1954",
+                "Price":9998,
+                "qty_available":100,
+                "qty_sold":0
+            },
+            {
+                "Make":"Gibson",
+                "Model":"Dove",
+                "Year":"1973",
+                "Image":"./images/Dove.png",
+                "Price":5989,
+                "qty_available":100,
+                "qty_sold":0
+            }
+        ],
+        
+        
+        "Ukuleles":
+        [
+            {
+                "Make":"Alvarez",
+                "Model":"MU55CE",
+                "Year":"2023",
+                "Image":"./images/Uke_Alvarez.png",
+                "Price":299,
+                "qty_available":100,
+                "qty_sold":0
+            },
+            {
+                "Make":"Kamaka",
+                "Model":"HF-1",
+                "Year":"2004",
+                "Image":"./images/KamakaHF.png",
+                "Price":826,
+                "qty_available":100,
+                "qty_sold":0
+            },
+            {
+                "Make":"Martin",
+                "Model":"T1 StreetMaster Uke",
+                "Year":"2022",
+                "Image":"./images/MartinUke.png",
+                "Price":499,
+                "qty_available":100,
+                "qty_sold":0
+            }
+            
+            
+        ]
+    }
+
+    
+    
+    
+   

@@ -1,15 +1,35 @@
-/* 
-Validation of registration Information
+/* register.js
+---------This is Sal's code for A3--------------------
+let params = (new URL(document.location)).searchParams;
 
-Email:
-     validateEmail
-      // Check if the email is unique
-Address:
-    use function isNonNegInt
-Get the values previously inputted and place them back into the input boxxes
-Get the error messages and display them accordingly
+// When the window loads, perfom the following function:
+window.onload = function() {
+    let register_form = document.forms['register_form'];
+
+    // Get the values previously inputted and place them back into the input boxes
+    register_form.elements['name'].value = params.get('name');
+    register_form.elements['email'].value = params.get('email');
+
+    // Get the error messages and display them accordingly
+    for (let i = 0; i <= document.getElementsByClassName('form-group').length; i++) {
+        let inputName = register_form.elements[i].name;
+
+        if (params.has(`${inputName}_length`)) {
+            document.getElementById(`${inputName}_error`).innerHTML = params.get(`${inputName}_length`);
+
+            if (params.has(`${inputName}_type`)) {
+                document.getElementById(`${inputName}_error`).innerHTML = params.get(`${inputName}_length`) + `<br>` + params.get(`${inputName}_type`);
+            }
+        } 
+        else if (params.has(`${inputName}_type`)) {
+            document.getElementById(`${inputName}_error`).innerHTML = params.get(`${inputName}_type`);
+        }
+    }            
+}
+
 */
 
+//-------MY Code from A2- probably need to come back and revise-------------//
 window.onload = function(){
 let params= (new URL (document.location)).searchParams;
 let register_form = document.forms['register_form'];
@@ -36,23 +56,6 @@ let register_form = document.forms['register_form'];
     }        
 }
     
-
-
-
-
-/*get error messages. 
-    let params = (new URL(document.location)).searchParams;
-    if (params.has('errors_obj')) {
-        //convert string to json string to object
-        let errors = JSON.parse(params.get('errors_obj'));
-        /*for(let err in errors) { 
-            // put the error messages in the div for the element where the error occured
-            document.getElementById(`${err}_errors`).innerHTML = errors[err].join('<br>');
-            // put value back in textbox (make sticky)
-            document.getElementById(err).value = params.get(err);
-        }*/ 
-     
-        
 /*---------------------------Password Validation---------------------------------
 use function validatePassword
 validateConfirmPassword

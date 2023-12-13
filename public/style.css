@@ -136,7 +136,12 @@ a:hover, .removeBtn:hover, .cartButton:hover, #back:hover {
     border-left: 2px solid black;
 }
 
-
+.home_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Viewport height */
+}
 /* Content */
 .container {
     text-align: center;
@@ -391,7 +396,7 @@ input {
   
   /* Style the submit button */
   input[type=submit] {
-    background-color: #04AA6D;
+    background-color:black;
     color: white;
   }
   
