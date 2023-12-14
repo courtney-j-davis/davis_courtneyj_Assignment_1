@@ -1,5 +1,5 @@
 /* register.js
----------This is Sal's code for A3--------------------
+---------This is Sal's code for A3--------------------*/
 let params = (new URL(document.location)).searchParams;
 
 // When the window loads, perfom the following function:
@@ -27,7 +27,7 @@ window.onload = function() {
     }            
 }
 
-*/
+/*
 
 //-------MY Code from A2- probably need to come back and revise-------------//
 window.onload = function(){
@@ -54,7 +54,7 @@ let register_form = document.forms['register_form'];
     if (stickyEmail) {
         document.getElementById('email').value = stickyEmail;
     }        
-}
+}*/
     
 /*---------------------------Password Validation---------------------------------
 use function validatePassword

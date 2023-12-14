@@ -175,13 +175,13 @@ app.post('/process_login', function (request, response) {
 
 
 //modify for cookies
- const registration_errors = {};
+ 
 app.post('/process_register', function (request, response) {
     //get user input
-    
-    let reg_name =request.body.name;
-    let reg_email = request.body.email.toLowerCase();
-    let reg_password = request.body.password;
+    let registration_errors = [];
+    let reg_name =request.body['name'];
+    let reg_email = request.body['email'].toLowerCase();
+    let reg_password = request.body['password'];
     let reg_confirm_password = request.body.confirm_password 
 
 
@@ -246,47 +246,32 @@ function validateEmail(email) {
 }
 
 
-//------------NAME VALIDATION---------------//
-// display error message when the name is empty
-if (request.body.name == "") {
-    errors['name'].push('The name is invalid. Please insert a name.');
-}
-// character limitations (only letters) (ChatGPT)
-if (/^[A-Za-z]+ [A-Za-z]+$/.test(request.body.name)) {
-} else {  // error message when name doesn't follow character guidelines
-    errors['name_format'].push('Please follow the format FirstName LastName!')
-}
-// the users full name should only allow letters, no more than 30 characters
-if (request.body.name.length > 30) { // execute errors if the name surpassed limit
-    errors['name'].push('The name is too long. Insert a name less than 30 characters.');
-}
-// error for when username is already taken
-if (typeof users_reg_data[register_user] != 'undefined') { 
-    errors['name'].push('Username is taken. Please use a different username.');
-}
+// ---------- NAME VALIDATION ----------
+function validateName(name) {
+    if (name == "") {
+        errors['name'].push('The name is invalid. Please insert a name.');
+    }
 
-if (registration_errors.length > 0) {
-    // Convert errors to a JSON string
-    const errorsJSON = JSON.stringify({ errors: registration_errors });
+    if (/^[A-Za-z]+ [A-Za-z]+$/.test(name)) {
+        // Code block for valid name format
+    } else {
+        errors['name_format'].push('Please follow the format FirstName LastName!');
+    }
 
-    // Redirect to the register.html page with errors in the query string
-    response.redirect(`/register.html?${errorsJSON}`);
-} else {
-    // No errors, proceed with registration
-    // Your existing registration code...
+    if (name.length > 30) {
+        errors['name'].push('The name is too long. Insert a name less than 30 characters.');
+    }
+
+    if (typeof users_reg_data[register_user] !== 'undefined') {
+        errors['name'].push('Username is taken. Please use a different username.');
+    }
 }
-});
 
 //----------password validation--------------//referenced from stack overflow
     function validateConfirmPassword(reg_confirm_password, reg_password) {
         // delete previous errors. 
         delete registration_errors['confirm_password_type'];
-        
-        
-        
-    
-
-        // Check if the password and repeat password match
+// Check if the password and repeat password match
         if (reg_password !== reg_confirm_password) {
           registration_errors['confirm_password_type']= 'Password and Repeat Password do not match.'
         } else {
@@ -299,14 +284,23 @@ if (registration_errors.length > 0) {
         return hash.digest('hex');
       }
     
-    
-app.post('/add_to_cart', function (request, response){
 
+
+      
+   //USER Product INPUT Validation into Cart /// 
+app.post('/add_to_cart', function (request, response){
+ //post the content of the request route
     let POST = request.body;
+    
+ //get the products_key from the hidden input box 
+    let products_key = POST['products_key'];
+    
 //create an empty error object
     let errorObject = {};
-
+  
     for (let i in products[products_key]) {
+        //retrieve the user's quantity inputs
+        let qty = POST[`qty${[i]}`];
 //loop through the product key and update the quantites
         let errorMessages =validateQuantity(qty, products[products_key][i].qty_available);
         if (errorMessages.length >0) {
@@ -336,13 +330,13 @@ app.post('/add_to_cart', function (request, response){
             //push the user input into the array
             user_qty.push(Number(POST[`qty${i}`]));
         }
-        request.session.cart[product_key]= user_qty;
-        response.redirect(`/products.html?products_key=${POST['products_key']}`);
+        request.session.cart[products_key]= user_qty;
+        response.redirect(`/products_display.html?products_key=${POST['products_key']}`);
 
     }
     //if there is an error
     else if (Object.keys(errorObject).length > 0) {
-        response.redirect(`/products.html?products_key=${qs.stringify(POST)}&inputErr`);
+        response.redirect(`/products_display.html?${qs.stringify(POST)}&inputErr`);
     } 
 })
 
@@ -361,7 +355,7 @@ app.post('/update_shopping_cart', function(request, response){
 })
  //This is used to cliccking on logout but then change mind go to products page.  
 app.post('/continue', function(request, response){
-    response.redirect(`/products.html?`);
+    response.redirect(`/products_display.html?`);
 })
 
 app.post(`/checkout`, function(request, response){
@@ -377,20 +371,118 @@ app.post(`/checkout`, function(request, response){
 
    //document.getElementById('register-form').submit();
    //update the total sold and quantity avalible 
-app.post("/complete_purchase", function (request, response) {
-    let orderParams = request.body['order'];
-    let orderArray = JSON.parse(orderParams);
-    let username = request.body['name'];
-    for (i in orderArray)
-        {
-            //update total and qty only if everything is good
-            products[i]['total_sold'] += orderArray[i];
-            products[i]['qty_available'] -= orderArray[i];
+app.post('/complete_purchase', function (request, response) {
+    let cookie = JSON.parse(request.cookies['user_cookie']);
+
+    let emai = cookie['email'];
+
+    let subtotal =0;
+    let total =0;
+
+    //Invoice table creation
+    let invoice_str = `
+        Thank you for you order!
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity Purchased</th>
+                        <th>Remaining Inventory</th>
+                        <th>Price</th>
+                        <th>Extended Price</th>
+                    </tr>
+                </thead>
+                </body>
+`;
+let shopping_cart = request.session.cart;
+//calculate quantity sold and inventory
+for (let products_key in products) {
+    for (let i in products[products_key]) {
+        //item has no quanity, its skipped over
+        if (typeof shopping_cart[products_key]== 'undefined') continue;
+
+        let qty = shopping_cart[products-key][i];
+
+        products[products_key][i].qty_sold += Number (qty);
+        products[products_key][i].qty_available -= Number (qty) || 0;
+   }
+}
+fs.writeFile(__dirname + '/products.json', JSON.stringify(products), 'utf-8', (err)=>{
+    if (err) {
+        console.error('error updating products data:' ,err);
+    } else {
+        console.log('Products data has been updated');
+    }
+});
+//This is to print invoice table in an email but I don't think I'm going to get that far, here's Sal's code just in case a miracle happens
+for (let products_key in products) {
+    for (let i in products[products_key]) {
+        if (typeof shopping_cart[products_key]== 'undefined') continue;
+
+        let qty = shopping_cart[products-key][i];
+        if (qty > 0){
+
+            let extended_price = qty * products[products_key][i].Price;
+            subtotal += extended_price;
+            invoice_str += `
+            <tr>
+                <td>${products[products_key][i].Make}</td>
+                <td>${products[products_key][i].Model}</td>
+                <td>${products[products_key][i].Year}</td>
+                <td>${qty}</td>
+                <td>${products[products_key][i].qty_available - qty}</td>
+                <td>${products[products_key][i].price.toFixed(2)}</td>
+                <td>$${extended_price}</td>
+            </td>
+            `;
         }
-        //log out user
-        loginUsers.pop(reg_name);
-        console.log(loginUsers);
-    response.redirect('/products_display.html?&thankYou=true');
+    }
+}
+//sales tax
+let tax_rate = (4.7/100);
+let tax_amt = subtotal * tax_rate;
+
+//shippping
+if (subtotal < 2000) {
+    shipping = 250;
+    shipping_display = `$${shipping.toFixed(2)}`;
+    total = Number(tax_amt + subtotal + shipping);
+}
+else if (subtotal >= 20000 && subtotal < 5000 ){
+    shipping = 100;
+    shipping_display = `$${shipping.toFixed(2)}`;
+    total = Number(tax_amt + subtotal + shipping);
+}
+else {
+    shipping = 0;
+    shipping_display = 'FREE';
+    total = Number(tax_amt + subtotal + shipping);
+}
+//add the rest of the invoice totals like subtotal
+invoice_str += `
+    <tr style="border-top: 2px solid black;">
+        <td colspan="4" style="text-align:center;">Sub-total</td>
+        <td>$${subtotal.toFixed(2)}</td>
+    </tr>
+    <tr>
+        <td colspan="4" style="text-align:center;">Tax @ ${Number(tax_rate)* 100}%</td>
+        <td>$${tax_amt.toFixed(2)}</td>
+    </tr>  
+    <tr>  
+        <td colspan="4" style="text-align:center;">Shipping</td>
+        <td>$${shipping_display}</td>
+    </tr> 
+    <tr>  
+        <td colspan="4" style="text-align:center;">b>Total</td>
+        <td>$${total.toFixed(2)}</td>
+    </tr> 
+    </tbody>
+    </table>
+ `;
+
+ request.session.destroy();//clear the cart (session cart)
+ response.send(invoice_str);
+
 })
 
 app.post('/process_logout', function (request, response){
@@ -418,4 +510,4 @@ app.post('/process_logout', function (request, response){
         }
 
     
-})
+})})

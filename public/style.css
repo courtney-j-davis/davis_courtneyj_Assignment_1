@@ -11,7 +11,7 @@ body {
 /* Styling image */
 img {
     justify-content: center;
-    max-width: 300px;
+    max-width: 250px;
 }
 .img-thumbnail {
     border: none;
@@ -549,3 +549,15 @@ header {
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
+.product_card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  
+  margin-bottom: 60px;
+   padding: 15px;
+}
+ 

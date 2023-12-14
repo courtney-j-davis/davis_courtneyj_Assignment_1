@@ -1,4 +1,4 @@
-// This function asks the server for a "service" and converts the response to text. 
+//This function asks the server for a "service" and converts the response to text. 
 //referenced code from Sal's site: Oscar's Aloha Attire...and  Dr Port. 
 function loadJSON(service, callback) {   
     let xobj = new XMLHttpRequest();

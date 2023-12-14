@@ -449,7 +449,7 @@ app.post('/update_shopping_cart', function(request, response){
 })
  //This is used to cliccking on logout but then change mind go to products page.  
 app.post('/continue', function(request, response){
-    response.redirect(`/products.html?`);
+    response.redirect(`/products_display.html?`);
 })
 
 app.post(`/checkout`, function(request, response){

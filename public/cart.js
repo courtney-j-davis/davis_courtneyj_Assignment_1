@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i in shopping_cart[products_key]) {
             let quantities = shopping_cart[products_key][i];
             if (quantities > 0) {
-                extended_price = quantities * products[products_key][i].price;
+                extended_price = quantities * products[products_key][i].Price;
                 subtotal += extended_price;
                 
                 /*this  part of the code is updating the content of the HTML element: cart_info 
@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('#cart_info').innerHTML += `
                     <table class="cartItems">
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 5px;">${products[products_key][i].name}</td>
+                            <td colspan="3" style="text-align: center; padding: 5px;">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</td>
                         </tr>
                         <tr>
                             <td rowspan="4" style="padding: 5px; width: 45%;"">
-                                <td width="15%"><img src="${products[products_key][i].image}" alt="${products[products_key][i].alt}" class="img-thumbnail"></td>
+                                <td width="15%"><img src="${products[products_key][i].Image}" class="img-thumbnail"></td>
                             </td>
-                            <td style="width: 20%;">$${(products[products_key][i].price).toFixed(2)} x </td>
+                            <td style="width: 20%;">$${(products[products_key][i].Price).toFixed(2)} </td>
                             <td style="width: 25%;">
                                 <div style="border-radius: 50px; border: 1px solid black; height: 30px; max-width: 90px;">
                                     <button type="button" id="minus${i}" class="cartButton"
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         if (document.getElementById('cartInput_${products_key}${i}').value == 0) { return;} 
                                         document.getElementById('cartUpdate').style.display = 'inline-block'; 
                                         document.getElementById('cartSubmit').style.display = 'none';
-                                        update_qty('cartInput_${products_key}${i}', -1, ${products[products_key][i].price})">
+                                        update_qty('cartInput_${products_key}${i}', -1, ${products[products_key][i].Price})">
                                     --
                                     </button>
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             if (document.getElementById('cartInput_${products_key}${i}').value == ${products[products_key][i].inventory}) return
                                             document.getElementById('cartUpdate').style.display = 'inline-block'; 
                                             document.getElementById('cartSubmit').style.display = 'none'; 
-                                            update_qty('cartInput_${products_key}${i}', 1, ${products[products_key][i].price});">+
+                                            update_qty('cartInput_${products_key}${i}', 1, ${products[products_key][i].Price});">+
                                     </button>
                                 </div>
                             </td>
@@ -81,11 +81,56 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     // Function to update totals based on the shopping cart
-   
+    document.addEventListener('DOMContentLoaded', function() {
+        // Displaying the cart total
+        document.getElementById('cart_total').innerHTML = totalItemsInCart;
+    
+        // Initialize variables for tax, subtotal, and total
+        let subtotal = 0;
+        let shipping;
+        let total_price = 0;
+        let tax_rate = (4.7/100);
+        //nested for loop 
+        for (let products_key in shopping_cart) {
+            for (let i in shopping_cart[products_key]) {
+                let quantities = shopping_cart[products_key][i];
+                if (quantities > 0) {
+                    extended_price = quantities * products[products_key][i].Price;
+                    subtotal += extended_price;
+                    
+                    /*this  part of the code is updating the content of the HTML element: cart_info 
+                    It updates the display of my shopping cart without requiring a full page on load. */
+                    document.querySelector('#cart_info').innerHTML += `
+                        <table class="cartItems">
+                        <tr>
+                        <td colspan="3" style="text-align: center; padding: 5px;">${subtotal}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</td>
+                    </tr>
+                        </table>
+                    `;
+                }
+            }
+        }
+    
+        // Initial calculation of tx, shipping, and total
+        update_totals();
+    
+        //If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
+        if (subtotal === 0) {
+            document.getElementById('cart_info').innerHTML = `Is Empty!`;
+            document.getElementById('cartSubmit').style.display = 'none';
+            document.getElementById('cartUpdate').style.display = 'none';
+    
+            document.querySelector('#tax_info').innerHTML = '';
+        }
+        else {
+            document.getElementById('cartUpdate').style.display = 'none';
+        }
+    })
+    
 
-    // If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
+    //If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
     if (subtotal === 0) {
-        document.getElementById('cart_info').innerHTML = `Empty cart.`;
+        document.getElementById('cart_info').innerHTML = `Is Empty.`;
         document.getElementById('cartSubmit').style.display = 'none';
         document.getElementById('cartUpdate').style.display = 'none';
 
@@ -175,30 +220,31 @@ function update_totals() {
 
             // Calculate subtotal, excluding items with a quantity of 0
             if (user_qty > 0) {
-                subtotal += user_qty * products[products_key][i].price;
+                subtotal += user_qty * products[products_key][i].Price;
             }
         }
     }
 
     // Sales tax
+    let tax_rate = (4.7/100);
     let tax_amt = subtotal * tax_rate;
 
     // Shipping
-    if (subtotal < 300) {
-        shipping = 5;
+    if (subtotal < 2000) {
+        shipping = 250;
         shipping_display = `$${shipping.toFixed(2)}`;
     }
-    else if (subtotal >= 300 && subtotal < 500) {
-        shipping = 10;
+    else if (subtotal >= 2000 && subtotal < 5000) {
+        shipping = 100;
         shipping_display = `$${shipping.toFixed(2)}`;
     }
     else {
         shipping = 0;
         shipping_display = 'FREE';
     }
-    total_price = Number(tax_amt + subtotal + shipping);
+    extended_price_price = Number(tax_amt + subtotal + shipping);
     
-    // Update the HTML content to display the calculated values
+    //Update the HTML content to display the calculated values
     document.querySelector('#tax_info').innerHTML = `
         <br>
         <p style="font-size: 13px;">
@@ -206,13 +252,13 @@ function update_totals() {
             Tax Amount: $${tax_amt.toFixed(2)}<br>
             Shipping: ${shipping_display}
         </p>
-        <p style="text-transform: uppercase;">Total: $${total_price.toFixed(2)}</p>
+        <p style="text-transform: uppercase;">Total: $${extended_price_price.toFixed(2)}</p>
 
 
         <p style="font-size: 10px;">SHIPPING POLICY: 
-            <br>For orders with subtotal <u>$300 or less</u>, a shipping fee of <u>$5</u> will be added.
-            <br>For orders with subtotal <u>$500 or less</u>, a shipping fee of <u>$10</u> will be added.
-            <br>Orders with subtotal <u>above $500</u> will receive <u>free shipping</u> .
+            <br>For orders with subtotal <u>$2000 or less</u>, a shipping fee of <u>$250</u> will be added.
+            <br>For orders with subtotal <u>$5000 or less</u>, a shipping fee of <u>$100</u> will be added.
+            <br>Orders with subtotal <u>above $5000</u> will receive <u>free shipping</u> .
         </p>
-    `;
-}
+`;
+} 
