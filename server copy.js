@@ -426,7 +426,58 @@ if (registration_errors.length > 0) {
     
     
    app.post('/add_to_cart', function (request, response){
+    //POST: request data from the products display page and respond with a redirect based on user input
+    //POST the content of the request route
+    let POST = request.body;
 
+    //GET the products_key ffrom the hidden input box
+    let product_key = POST['product_key'];
+
+    //Create an object to store error messages
+    let errorObject = {};
+
+    for (let i in products[products_key]){
+        //retrienve the user quantity inputs
+        let qty = POST [`qty${[i]}`];
+
+        //if an invalid quanity was sbmitted, set the name = value pairs in errObj as the errMsg
+        let errorMessages = validateQuantity(qty, products[products_key][i].qty_available);
+        if (errorMessages.length > 0) {
+            //storing the error message in the URL
+            errorObject[`qty${[[i]]}_error`]= errorMessages.join(', ');
+    }
+    console.log('error message are' + errorMessages)
+}
+console.log("errorObject = "+Object.keys(errorObject)+ " " +Object.keys(errorObject).length);
+
+//If there are no errors
+if (Object.keys(errorObject).length == 0){
+    //if the session cart does not exist
+    if (!request.session.cart) {
+        //creat one
+        request.session.cart[product_key] = [];
+    }
+
+    //if the session cart array for a product category does not exsit
+    if (typeof request.session.cart[products_key]== 'undefined'){
+        //create one 
+        request.session.cart[products_key] = [];
+    }
+    //make an array to store the quantities the users input
+    let user_qty =[];
+
+    for (let i in products[products_key]) {
+        user_qty.push(Number(POST[`qty${i}`]));
+    }
+
+    //set user_qty in the session
+    request.session.cart[products_key] = user_qty;
+
+    response.redirect(`products_display.html?products_key=${POST['products_key']}`);
+}
+else if (Object.keys(errorObject).length >0) {
+    response.redirect(`/products_display.html?${qs.stringify(POST)}&inputErr`);
+}
 
 
 

@@ -287,60 +287,7 @@ function validateName(name) {
 
 
       
-   //USER Product INPUT Validation into Cart /// 
-app.post('/add_to_cart', function (request, response){
- //post the content of the request route
-    let POST = request.body;
-    
- //get the products_key from the hidden input box 
-    let products_key = POST['products_key'];
-    
-//create an empty error object
-    let errorObject = {};
-  
-    for (let i in products[products_key]) {
-        //retrieve the user's quantity inputs
-        let qty = POST[`qty${[i]}`];
-//loop through the product key and update the quantites
-        let errorMessages =validateQuantity(qty, products[products_key][i].qty_available);
-        if (errorMessages.length >0) {
-
-            errorObject[`qty${[i]}_error`] =errorMessages.join(', ');
-        }
-        console.log('error messages are: + errorMessages');
-    }
-// just to see what errors I have
-    console.log("errorObject = "+Object.keys(errorObject)+ " " +Object.keys(errorObject).length);
-    //If there are no errors
-    if (Object.keys(errorObject).length == 0) {
-        if (!request.session.cart) {
-            //Create a session
-            request.session.cart = {};
-        }
-        //it the session cart array for a product category does not exist, just make sure there isn't an error in the program if there is an undefined
-
-        if (typeof request.session.cart[products_key]== 'undefined') {
-            //Create a session cart array
-            request.session.cart[products_key] = [];
-        }
-        //make an array to store the quantitiers the users input
-        let user_qty = [];
-
-        for (let i in products[products_key]) {
-            //push the user input into the array
-            user_qty.push(Number(POST[`qty${i}`]));
-        }
-        request.session.cart[products_key]= user_qty;
-        response.redirect(`/products_display.html?products_key=${POST['products_key']}`);
-
-    }
-    //if there is an error
-    else if (Object.keys(errorObject).length > 0) {
-        response.redirect(`/products_display.html?${qs.stringify(POST)}&inputErr`);
-    } 
-})
-
-
+      https://github.com/courtney-j-davis/davis_courtney_assignment3
 app.post('/update_shopping_cart', function(request, response){
     let POST = request.body;
 
