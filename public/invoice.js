@@ -1,7 +1,4 @@
-/*g
 
-
-*/
 
 
 
@@ -22,7 +19,8 @@ window.onload = function() {
             </body>
         `)
     }else {  //assignment 2 addition that personalizes shopping experience.
-        document.getElementById('helloMsg').innerHTML = `Thank you ${params.get('name')}!`;
+        
+       // document.getElementById('helloMsg').innerHTML = `Thank you ${user_cookie['name']}!`;
     }
 }
 //If no cookie is detected, send the user to the loin page
@@ -51,7 +49,7 @@ for (let products_key in shopping_cart) {
 
         document.querySelector('#invoice_table').innerHTML += `
             <tr style="border: none;">
-                <td width="10%"><img src="${products[products_key][i].Image}" alt="${products[products_key][i].alt}" class="img" style="border-radius: 5px; width: 50px; height: 70px;"></td>
+                <td width="10%"><img src="${products[products_key][i].Image}" class="img" style="border-radius: 5px; width: 50px; height: 70px;"></td>
                 <td>${products[products_key][i].Make}</td>
                 <td>${products[products_key][i].Model}</td>
                 <td>${products[products_key][i].Year}</td>
@@ -69,8 +67,8 @@ let tax_rate = (4.7/100);
 let tax_amt = subtotal * tax_rate;
 
 // Shipping
-if (subtotal < 300) {
-    shipping = 5;
+if (subtotal < 2000) {
+    shipping = 300;
     shipping_display = `$${shipping.toFixed(2)}`;
     total = Number(tax_amt + subtotal + shipping);
 }

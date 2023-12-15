@@ -25,15 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('#cart_info').innerHTML += `
                     <table class="cartItems">
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 5px;">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</td>
+                            <td  style="text-align: left; padding: 5px;">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</td>
                         </tr>
                         <tr>
-                            <td rowspan="4" style="padding: 5px; width: 45%;"">
-                                <td width="15%"><img src="${products[products_key][i].Image}" class="img-thumbnail"></td>
+                            <td>
+                                <td width="25%"><img src="${products[products_key][i].Image}" class="img-thumbnail"></td>
                             </td>
-                            <td style="width: 20%;">$${(products[products_key][i].Price).toFixed(2)} </td>
-                            <td style="width: 25%;">
-                                <div style="border-radius: 50px; border: 1px solid black; height: 30px; max-width: 90px;">
+                            <td style="width: 10%;">$${(products[products_key][i].Price).toFixed(2)} </td>
+                            <td style="width: 15%;">
+                                <div style="border-radius: 25px; border: 1px solid black; height: 30px; max-width: 90px;">
                                     <button type="button" id="minus${i}" class="cartButton"
                                     onclick="
                                         if (document.getElementById('cartInput_${products_key}${i}').value == 0) { return;} 

@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank you for ordering!</title>
+<!-- Loading navbar links -->
+<script type="text/javascript" src="/functions.js"></script>
+<script type="text/javascript" src="/navbar.js"></script>
 
     <!--USING BOOTSTRAP 4 -->
     <!-- Latest compiled and minified CSS -->
@@ -24,15 +27,9 @@
 <body>
     <h1>BR Fret Shop || Invoice</h1>
     <br><br>
-    <h5 id="helloMsg" style="color: orange;"></h5>
+    <h5 id="verify" style="color: orange;"></h5>
     <br>
-   
-<body>
-    
-    
- 
-
-    <div class="container">
+   <div class="container">
         <br>
         <br>
 
@@ -40,14 +37,14 @@
         <table class="table">
             <thead style="background-color: #de7b11; color: #f7fcff; font-weight: bolder;">
                 <tr>
-                    <th scope="col">Item</th>
+                   
                     <th scope="col">Make</th>
                     <th scope="col">Model</th>
                     <th scope="col">Year</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Remaining Inventory</th>
                     <th scope="col">Price</th>
-                    <th scope="col">Extende Price</th>
+                    <th scope="col">Extended Price</th>
                 </tr>
             </thead>
             <tbody id="invoice_table"></tbody>
@@ -57,14 +54,13 @@
         <div class = "buttons-container">
             <form name = "invoice" method = "POST">
               <div class="button-wrapper">
-              <input class = "sm-button-highlight" type = "submit" value = "Continue Shopping" name = "continue" onclick = "invoice.action='/continue_shopping'" style = "width: 40%">
+              <input class = "sm-button-highlight" type = "submit" value = "Continue Shopping" name = "continue" onclick = "invoice.action='/continue'" style = "width: 60%">
               
               </div>
           
-              <div class="button-wrapper2">
-                    <input class = "sm-button-highlight" type = "submit" value = "Complete Purchase" name = "logout" onclick = "invoice.action='/purchase_logout'" style = "width: 40%">
-                     <div class="popup" onclick="completePurchase()">Complete Purchase
-                    <span class="popuptext" id="myPopup">Thank you for shopping with us!</span>
+              <div class="button-wrapper">
+                    <input class = "sm-button-highlight" type = "submit" value = "Complete Purchase" name = "logout" onclick = "invoice.action='/purchase_logout'" style = "width: 60%">
+                     
               </div>
               </div>
             </form>

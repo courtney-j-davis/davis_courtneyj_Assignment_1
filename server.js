@@ -110,9 +110,9 @@ if (fs.existsSync(filename)) {
     user_data = {};
 }
 
-//app.post('/get_cart',function (request, response){
-    //response.json(request.session.cart);
-//})
+app.post('/get_cart',function (request, response){
+    response.json(request.session.cart);
+})
 //add something to do with get status###########
 let temp_user ={};
 
@@ -122,6 +122,7 @@ app.post('/process_login', function (request, response) {
     let POST = request.body;
     let entered_email = POST['email'].toLowerCase();
     let entered_password = POST['password'];
+    
     
 //this means the text boxes are blank/
     if (entered_email.length === 0 && entered_password.length === 0) {
@@ -284,6 +285,11 @@ function validateName(name) {
 
 //----------password validation--------------//referenced from stack overflow
     function validateConfirmPassword(reg_confirm_password, reg_password) {
+        let registration_errors = [];
+    
+    
+    
+    
         // delete previous errors. 
         delete registration_errors['confirm_password_type'];
 // Check if the password and repeat password match
@@ -327,7 +333,7 @@ function validateName(name) {
         //if the session cart does not exist
         if (!request.session.cart) {
             //creat one
-            request.session.cart = [];
+            request.session.car = [];
         }
     
         //if the session cart array for a product category does not exsit
@@ -390,7 +396,7 @@ app.post(`/checkout`, function(request, response){
 app.post('/complete_purchase', function (request, response) {
     let cookie = JSON.parse(request.cookies['user_cookie']);
 
-    let emai = cookie['email'];
+    let email = cookie['email'];
 
     let subtotal =0;
     let total =0;
@@ -401,14 +407,16 @@ app.post('/complete_purchase', function (request, response) {
             <table>
                 <thead>
                     <tr>
-                        <th>Item</th>
-                        <th>Quantity Purchased</th>
+                        <th>Make</th>
+                        <th>Model</th>
+                        <th>Year</th>
+                        <th>Quantity</th>
                         <th>Remaining Inventory</th>
                         <th>Price</th>
                         <th>Extended Price</th>
                     </tr>
                 </thead>
-                </body>
+            <tbody>
 `;
 let shopping_cart = request.session.cart;
 //calculate quantity sold and inventory
@@ -417,7 +425,7 @@ for (let products_key in products) {
         //item has no quanity, its skipped over
         if (typeof shopping_cart[products_key]== 'undefined') continue;
 
-        let qty = shopping_cart[products-key][i];
+        let qty = shopping_cart[products_key][i];
 
         products[products_key][i].qty_sold += Number (qty);
         products[products_key][i].qty_available -= Number (qty) || 0;
@@ -435,7 +443,7 @@ for (let products_key in products) {
     for (let i in products[products_key]) {
         if (typeof shopping_cart[products_key]== 'undefined') continue;
 
-        let qty = shopping_cart[products-key][i];
+        let qty = shopping_cart[products_key][i];
         if (qty > 0){
 
             let extended_price = qty * products[products_key][i].Price;
@@ -447,7 +455,7 @@ for (let products_key in products) {
                 <td>${products[products_key][i].Year}</td>
                 <td>${qty}</td>
                 <td>${products[products_key][i].qty_available - qty}</td>
-                <td>${products[products_key][i].price.toFixed(2)}</td>
+                <td>${products[products_key][i].Price.toFixed(2)}</td>
                 <td>$${extended_price}</td>
             </td>
             `;
