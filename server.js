@@ -110,9 +110,9 @@ if (fs.existsSync(filename)) {
     user_data = {};
 }
 
-app.post('/get_cart',function (request, response){
-    response.json(request.session.cart);
-})
+//app.post('/get_cart',function (request, response){
+    //response.json(request.session.cart);
+//})
 //add something to do with get status###########
 let temp_user ={};
 
@@ -185,44 +185,59 @@ app.post('/process_register', function (request, response) {
     let reg_confirm_password = request.body.confirm_password 
 
 
-    validateConfirmPassword (reg_confirm_password, reg_password); 
-    //--------NO ERRORS------------server response..checking if there are no errors. 
-    if (Object.keys(registration_errors).length ==0) {
-        //make a new object in the user_data object
-       user_data[reg_email] = {
-        "name": reg_name,
-        "password": reg_password,
-        "status": true
-       };
-    
-       // Asynchronosuly write the updated user_data and products to their respective files
-     fs.writeFile(__dirname + '/user_data.json', JSON.stringify(user_data), 'utf-8', (err)=> {
-        if (err) {
-            console.error('Error updating user data:', err);
-            //consider editing this for my personal preference to where I want to send an error response. 
+    validateConfirmPassword(reg_confirm_password, reg_password);
 
-        } else {
-            console.log('User data has been updated!');
+    // NO ERRORS - server response
+    if (Object.keys(registration_errors).length == 0) {
+        try {
+            // hash the password before storing
+            const hashedPassword = hashPassword(reg_password);
 
-            status[reg_email]=true;
+            // make a new object in the user_data object
+            user_data[reg_email] = {
+                "name": reg_name,
+                "password": hashedPassword,
+                "status": true
+            };
 
-            response.redirect(`/login.html`);
+            // Asynchronously write the updated user_data and products to their respective files
+            fs.writeFile(__dirname + '/user_data.json', JSON.stringify(user_data), 'utf-8', (err) => {
+                if (err) {
+                    console.error('Error updating user data:', err);
+                    // consider editing this for my personal preference to where I want to send an error response.
+
+                } else {
+                    console.log('User data has been updated!');
+
+                    status[reg_email] = true;
+
+                    response.redirect(`/login.html`);
+                }
+            });
+        } catch (error) {
+            console.error('Error hashing password:', error);
+            // Handle the error, possibly redirect to an error page
         }
-    });
-} 
-else //there are errors from validation and stored in registration_errors
-    {
-    delete request.body.password;
-    delete request.body.confirm_password;
-//stays the same for A3
-    let params = new URLSearchParams(Object.entries(request.body));
-    let redirectURL = `/register.html?${params.toString()}&${qs.stringify(registration_errors)}`;
+    } else {
+        // there are errors from validation and stored in registration_errors
+        delete request.body.password;
+        delete request.body.confirm_password;
+
+        // stays the same for A3
+        let params = new URLSearchParams(Object.entries(request.body));
+        let redirectURL = `/register.html?${params.toString()}&${qs.stringify(registration_errors)}`;
 
         // Redirect to the constructed URL
         response.redirect(redirectURL);
     }
+});
 
-
+// Hashing function using the crypto module
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    return `${salt}$${hash}`;
+}
 
 //-----------EMAIL VALIDATION----------------//
 function validateEmail(email) {
@@ -243,7 +258,7 @@ function validateEmail(email) {
         registration_errors.push(`Email Address ${email} Already Exists!`);
     }
     console.log('Email Exists');
-}
+};
 
 
 // ---------- NAME VALIDATION ----------
@@ -265,7 +280,7 @@ function validateName(name) {
     if (typeof users_reg_data[register_user] !== 'undefined') {
         errors['name'].push('Username is taken. Please use a different username.');
     }
-}
+};
 
 //----------password validation--------------//referenced from stack overflow
     function validateConfirmPassword(reg_confirm_password, reg_password) {
@@ -278,16 +293,70 @@ function validateName(name) {
             console.log('Passwords Match!');
        
       }}
-      function hashPassword (password) {
-        let hash = crypto.createHash ('sha256');
-        hash.update(password);
-        return hash.digest('hex');
-      }
+      
+
+    
+      app.post('/add_to_cart', function (request, response){
+        //POST: request data from the products display page and respond with a redirect based on user input
+        //POST the content of the request route
+        let POST = request.body;
+    
+        //GET the products_key ffrom the hidden input box
+        let products_key = POST['products_key'];
+    
+        //Create an object to store error messages
+        let errorObject = {};
+    
+        for (let i in products[products_key]){
+
+            //retrienve the user quantity inputs
+            let qty = POST [`qty${[i]}`];
+    
+            //if an invalid quanity was sbmitted, set the name = value pairs in errObj as the errMsg
+            let errorMessages = validateQuantity(qty, products[products_key][i].qty_available);
+            if (errorMessages.length > 0) {
+                //storing the error message in the URL
+                errorObject[`qty${[[i]]}_error`]= errorMessages.join(', ');
+        }
+        console.log('error message are' + errorMessages)
+    }
+    console.log("errorObject = "+Object.keys(errorObject)+ " " +Object.keys(errorObject).length);
+    
+    //If there are no errors
+    if (Object.keys(errorObject).length == 0){
+        //if the session cart does not exist
+        if (!request.session.cart) {
+            //creat one
+            request.session.cart[product_key] = [];
+        }
+    
+        //if the session cart array for a product category does not exsit
+        if (typeof request.session.cart[products_key]== 'undefined'){
+            //create one 
+            request.session.cart[products_key] = [];
+        }
+        //make an array to store the quantities the users input
+        let user_qty =[];
+    
+        for (let i in products[products_key]) {
+            user_qty.push(Number(POST[`qty${i}`]));
+        }
+    
+        //set user_qty in the session
+        request.session.cart[products_key] = user_qty;
+    
+        response.redirect(`products_display.html?products_key=${POST['products_key']}`);
+    }
+    else if (Object.keys(errorObject).length >0) {
+        response.redirect(`/products_display.html?${qs.stringify(POST)}&inputErr`);
+    }});
+    
+    
+    
     
 
-
       
-      https://github.com/courtney-j-davis/davis_courtney_assignment3
+      
 app.post('/update_shopping_cart', function(request, response){
     let POST = request.body;
 
@@ -457,4 +526,4 @@ app.post('/process_logout', function (request, response){
         }
 
     
-})})
+});

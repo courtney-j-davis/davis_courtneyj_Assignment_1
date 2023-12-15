@@ -275,7 +275,7 @@ app.post('/process_login', function (request, response) {
             //store the user name and email in the cookie. 
             let user_cookie= {"email": entered_email, "name": user_data[entered_email]['name']}
             
-            response.cookie('user_cookie', JSON.stringify(user_cookie), (macAge: 900 * 1000));
+            response.cookie('user_cookie', JSON.stringify(user_cookie), (maxcAge: 900 * 1000));
             console.log(user_cookie);
             
             //Redirect to
@@ -425,7 +425,7 @@ if (registration_errors.length > 0) {
       }
     
     
-   app.post('/add_to_cart', function (request, response){
+app.post('/add_to_cart', function (request, response){
     //POST: request data from the products display page and respond with a redirect based on user input
     //POST the content of the request route
     let POST = request.body;

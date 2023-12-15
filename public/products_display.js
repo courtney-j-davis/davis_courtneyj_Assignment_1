@@ -136,19 +136,22 @@ window.onload = function() {
             }
         }
     }
-    //making the input sticy using the cookie
-    if ((typeof shopping_cart[products_key] != 'undefined') && (params.has('inputErr') != true)) {
-        for (let i in shopping_cart[products_key]) {
-            if (shopping_cart[products_key][i] == 0) {
-                document.getElementById(`qty${[i]}`).value = '';
-            } 
-            else {
-                document.getElementById(`qty${[i]}`).value = shopping_cart[products_key][i];
+    /*making the input sticy using the cookie
+    for (let i in products) {
+        // Assuming products[i] represents a product object
+        let products_key = products[i].products_key;
+    
+        if ((typeof shopping_cart[products_key] !== 'undefined') && (params.has('inputErr') !== true)) {
+            for (let i in shopping_cart[products_key]) {
+                if (shopping_cart[products_key][j] == 0) {
+                    document.getElementById(`qty${[j]}`).value = '';
+                } else {
+                    document.getElementById(`qty${[j]}`).value = shopping_cart[products_key][j];
+                }
             }
         }
-    }
-}
-
+    }*/
+    
     
 
 
@@ -159,4 +162,4 @@ window.onload = function() {
         }
         document.getElementById("login_status").innerHtml = login_user.length;
     }
-  
+}
