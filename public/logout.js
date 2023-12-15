@@ -6,7 +6,7 @@ if (getCookie('user_cookie') != false) {
     <p> Are you sure you WANT to leave?</p>
     `;
 //This clears the user_cookie and won't be personalized. Effectively gets rid of client side cookie. 
-    document.getElementById('logout_buton').addEventListener('click', function(){
+    document.getElementById('logout_button').addEventListener('click', function(){
         document.cookie = 'user_cookie=; expires=Thu, 01 Jan 1981 00:00:00 UTC; path=/;';
 
 

@@ -327,7 +327,7 @@ function validateName(name) {
         //if the session cart does not exist
         if (!request.session.cart) {
             //creat one
-            request.session.cart[product_key] = [];
+            request.session.cart = [];
         }
     
         //if the session cart array for a product category does not exsit

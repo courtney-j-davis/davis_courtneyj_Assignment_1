@@ -136,7 +136,7 @@ window.onload = function() {
             }
         }
     }
-    /*making the input sticy using the cookie
+    //making the input sticy using the cookie
     for (let i in products) {
         // Assuming products[i] represents a product object
         let products_key = products[i].products_key;
@@ -150,7 +150,7 @@ window.onload = function() {
                 }
             }
         }
-    }*/
+    }
     
     
 

@@ -50,7 +50,8 @@
                 "Make":"Fender",
                 "Model": "Telecaster",
                 "Year": "1974",
-                "Image":"./Fender_Telecaster.png",
+                "Image":"./images/Fender_Telecaster.png",
+                "Price": 6500,
                 "qty_available": 100,
                 "qty_sold":0
             }
@@ -79,7 +80,7 @@
                 "Make":"Gibson",
                 "Model":"SJN Country Western",
                 "Year":"1964",
-                "Image":"./images/Gibson1964.png",
+                "Image":"./images/GibsonES-330TD.png",
                 "Price":8989,
                 "qty_available":100,
                 "qty_sold":0  
@@ -97,7 +98,7 @@
                 "Make":"Martin",
                 "Model":"000-18 Natural",
                 "Year":"1954",
-                "Image":"./images/Martin_1954",
+                "Image":"./images/Martin_1954.png",
                 "Price":9998,
                 "qty_available":100,
                 "qty_sold":0

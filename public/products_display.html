@@ -77,7 +77,7 @@
             <!--the action "process_purchase" has been defined on the server side with a POST route handler. This will send to the server-->
             <form action="/add_to_cart" method="POST" name="qty_form" class="qty_form">
               <div class="row"></div>
-              <!--<input type="submit" value="Purchase" class="sm-button highlight" action="/add_to_cart" method="POST"> -->
+              
               <script>
                   // Storing the products_key to be used on the server
                   //This is from Sal's presentation of A3, thank you!
@@ -85,12 +85,12 @@
               </script>
               <!--this div class= "row" (inner.HTML function) will dynamically populate the website -->
               <div class="row"></div>
-              <input type="submit" value="Add To Cart" class="sm-button highlight" action="/add_to_cart" method="POST">
+              <input type="submit" value="Add To Cart" class="sm-button highlight" onclick="invoice.action= '/add_to_cart'"  method="POST">
           </form>
         
           
             <div class="row"></div>
-            
+            <input type="submit" value="Purchase" class="sm-button highlight" action="/add_to_cart" method="POST"> 
         </form>
     </div>
     <div class="current-users">
