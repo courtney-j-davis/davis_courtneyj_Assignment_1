@@ -4,8 +4,8 @@ for (let i in products[products_key]) {
     document.querySelector('.row').innerHTML += `
     <div class="col-md-6 product_card" style="margin-bottom: 40px; padding: 15px;">
     <div>
-    <h5 style="float: left;" class="product_name">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</h5>
-    <h5 style="float: right;">$${Number(products[products_key][i].Price).toFixed(2)}</h5>
+    <h5  class="product_name">${products[products_key][i].Make}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</h5>
+    
 </div>  
 <img src="${products[products_key][i].Image}" class="img">
 <div style="height: 90px;">
@@ -29,6 +29,9 @@ for (let i in products[products_key]) {
         <tr>
             <td colspan="3" style="padding-top: 5px;"><div id="qty${[i]}_error" style="color: red;"></div></td>
         </tr>
+        <br>
+        <br>
+        <h1 class="product_price">$${Number(products[products_key][i].Price).toFixed(2)}</h1>
     </table>
 </div>  
 </div>

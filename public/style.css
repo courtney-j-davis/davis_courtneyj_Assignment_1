@@ -39,11 +39,7 @@ header {
     height: 100px;
  }
 
-#cart-icon
-{
-    width: 20px; /* Set the desired width */
-    height: 20px; /* Set the desired height */
-}
+
 
 
 
@@ -342,9 +338,7 @@ a:hover, .removeBtn:hover, .cartButton:hover, #back:hover {
     position: relative;
     border-radius: 6px;
 }
-.art {
-    max-width: 400px;
-}
+
 .col-md-6 {
     margin-bottom: 10px;
 }
@@ -560,4 +554,10 @@ header {
   margin-bottom: 60px;
    padding: 15px;
 }
- 
+.product_name {
+    margin-bottom: auto; /* Push the name to the top */
+}
+
+.product_price {
+    margin-top: auto; /* Push the price to the bottom */
+}
