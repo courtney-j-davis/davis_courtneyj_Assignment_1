@@ -1,6 +1,6 @@
 //server.js
 //From Assignment One. 
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');//const crypto = require('crypto');
 const express = require('express');
 const app = express();
 
@@ -121,9 +121,8 @@ app.post('/process_login', function (request, response) {
 
     let POST = request.body;
     let entered_email = POST['email'].toLowerCase();
-    let entered_password = POST['password'];
-    
-    
+    //let entered_password = POST['password'];
+    const storedHashedPassword = user_data[entered_email]?.password;
 //this means the text boxes are blank/
     if (entered_email.length === 0 && entered_password.length === 0) {
         request.query.loginErr = 'Email address & password are both required.';
@@ -233,11 +232,11 @@ app.post('/process_register', function (request, response) {
     }
 });
 
-// Hashing function using the crypto module
-function hashPassword(password) {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-    return `${salt}$${hash}`;
+// Hashing function using the crypto module first which would unhash on the client side, Asked Chat and revised encryption to use bcrypt, fingers cross this works
+async function hashPassword(password) {
+    const saltRounds = 10;  //crypto.randomBytes(16).toString('hex');
+    const hashedPassword = await bycrypt.hash(password, saltRounds); //crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    return hashedPassword//`${salt}$${hash}`;
 }
 
 //-----------EMAIL VALIDATION----------------//
@@ -393,145 +392,25 @@ app.post(`/checkout`, function(request, response){
 
    //document.getElementById('register-form').submit();
    //update the total sold and quantity avalible 
-app.post('/complete_purchase', function (request, response) {
+   app.post('/process_logout', function (request, response) {
     let cookie = JSON.parse(request.cookies['user_cookie']);
-
     let email = cookie['email'];
 
-    let subtotal =0;
-    let total =0;
+    if (user_data[email] && user_data[email].status == true) {
+        // Remove user status ------ need to put div in HTML for user status
+        delete status[email];
+        user_data[email].status = false;
 
-    //Invoice table creation
-    let invoice_str = `
-        Thank you for you order!
-            <table>
-                <thead>
-                    <tr>
-                        <th>Make</th>
-                        <th>Model</th>
-                        <th>Year</th>
-                        <th>Quantity</th>
-                        <th>Remaining Inventory</th>
-                        <th>Price</th>
-                        <th>Extended Price</th>
-                    </tr>
-                </thead>
-            <tbody>
-`;
-let shopping_cart = request.session.cart;
-//calculate quantity sold and inventory
-for (let products_key in products) {
-    for (let i in products[products_key]) {
-        //item has no quanity, its skipped over
-        if (typeof shopping_cart[products_key]== 'undefined') continue;
+        response.clearCookie("user_cookie");
 
-        let qty = shopping_cart[products_key][i];
+        request.session.users = Object.keys(status).length;
 
-        products[products_key][i].qty_sold += Number (qty);
-        products[products_key][i].qty_available -= Number (qty) || 0;
-   }
-}
-fs.writeFile(__dirname + '/products.json', JSON.stringify(products), 'utf-8', (err)=>{
-    if (err) {
-        console.error('error updating products data:' ,err);
-    } else {
-        console.log('Products data has been updated');
+        fs.writeFile(filename, JSON.stringify(user_data), 'utf-8', (err) => {
+            if (err) {
+                console.error('Error updating user data:', err);
+            } else {
+                response.redirect(`/thanks.html`);
+            }
+        });
     }
-});
-//This is to print invoice table in an email but I don't think I'm going to get that far, here's Sal's code just in case a miracle happens
-for (let products_key in products) {
-    for (let i in products[products_key]) {
-        if (typeof shopping_cart[products_key]== 'undefined') continue;
-
-        let qty = shopping_cart[products_key][i];
-        if (qty > 0){
-
-            let extended_price = qty * products[products_key][i].Price;
-            subtotal += extended_price;
-            invoice_str += `
-            <tr>
-                <td>${products[products_key][i].Make}</td>
-                <td>${products[products_key][i].Model}</td>
-                <td>${products[products_key][i].Year}</td>
-                <td>${qty}</td>
-                <td>${products[products_key][i].qty_available - qty}</td>
-                <td>${products[products_key][i].Price.toFixed(2)}</td>
-                <td>$${extended_price}</td>
-            </td>
-            `;
-        }
-    }
-}
-//sales tax
-let tax_rate = (4.7/100);
-let tax_amt = subtotal * tax_rate;
-
-//shippping
-if (subtotal < 2000) {
-    shipping = 250;
-    shipping_display = `$${shipping.toFixed(2)}`;
-    total = Number(tax_amt + subtotal + shipping);
-}
-else if (subtotal >= 20000 && subtotal < 5000 ){
-    shipping = 100;
-    shipping_display = `$${shipping.toFixed(2)}`;
-    total = Number(tax_amt + subtotal + shipping);
-}
-else {
-    shipping = 0;
-    shipping_display = 'FREE';
-    total = Number(tax_amt + subtotal + shipping);
-}
-//add the rest of the invoice totals like subtotal
-invoice_str += `
-    <tr style="border-top: 2px solid black;">
-        <td colspan="4" style="text-align:center;">Sub-total</td>
-        <td>$${subtotal.toFixed(2)}</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="text-align:center;">Tax @ ${Number(tax_rate)* 100}%</td>
-        <td>$${tax_amt.toFixed(2)}</td>
-    </tr>  
-    <tr>  
-        <td colspan="4" style="text-align:center;">Shipping</td>
-        <td>$${shipping_display}</td>
-    </tr> 
-    <tr>  
-        <td colspan="4" style="text-align:center;">b>Total</td>
-        <td>$${total.toFixed(2)}</td>
-    </tr> 
-    </tbody>
-    </table>
- `;
-
- request.session.destroy();//clear the cart (session cart)
- response.send(invoice_str);
-
-})
-
-app.post('/process_logout', function (request, response){
-        let cookie = JSON.parse(request.cookies['user_cookie']);
-
-        let email = cookie['email'];
-
-        if (user_data [email]&& user_data[email].status == true) {
-            //remove user status------need to put div in HTML for user status
-            delete status[email];
-
-            user_data[email].status = false
-
-            response.clearCookie("user_cookie");
-
-            request.session.users = Object.keys(status.length);
-
-            fs.writeFile(filename, JSON.stringify(user_data), 'utf-8', (err) => {
-                if (err) {
-                    console.error('Error updating user data:', err);
-                } else{
-                    console.log///follow up with the rest of the code. 
-                }
-            })
-        }
-
-    
 });

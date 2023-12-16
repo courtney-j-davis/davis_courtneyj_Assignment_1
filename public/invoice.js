@@ -38,6 +38,7 @@ document.getElementById('verify').innerHTML = `
 `;
 
 let subtotal = 0;
+//this code is referenced from Sal
 //for loop to puch table to invoice.html getting the value fro the cookies and updating the totals and stuff. 
 for (let products_key in shopping_cart) {
     for (let i in shopping_cart[products_key]){
