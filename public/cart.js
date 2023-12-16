@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables for tax, subtotal, and total
     let subtotal = 0;
     let shipping;
-    let total_price = 0;
+    let extended_price = 0;
     let tax_rate = (4.7/100);
     //nested for loop 
     for (let products_key in shopping_cart) {
@@ -78,43 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //  Initial calculation of tx, shipping, and total
     update_totals();
 
-    
-
-    // Function to update totals based on the shopping cart
-    document.addEventListener('DOMContentLoaded', function() {
-        // Displaying the cart total
-        document.getElementById('cart_total').innerHTML = totalItemsInCart;
-    
-        // Initialize variables for tax, subtotal, and total
-        let subtotal = 0;
-        let shipping;
-        let total_price = 0;
-        let tax_rate = (4.7/100);
-        //nested for loop 
-        for (let products_key in shopping_cart) {
-            for (let i in shopping_cart[products_key]) {
-                let quantities = shopping_cart[products_key][i];
-                if (quantities > 0) {
-                    extended_price = quantities * products[products_key][i].Price;
-                    subtotal += extended_price;
-                    
-                    /*this  part of the code is updating the content of the HTML element: cart_info 
-                    It updates the display of my shopping cart without requiring a full page on load. */
-                    document.querySelector('#cart_info').innerHTML += `
-                        <table class="cartItems">
-                        <tr>
-                        <td colspan="3" style="text-align: center; padding: 5px;">${subtotal}<br>${products[products_key][i].Model}<br>${products[products_key][i].Year}</td>
-                    </tr>
-                        </table>
-                    `;
-                }
-            }
-        }
-    
-        // Initial calculation of tx, shipping, and total
-        update_totals();
-    
-        //If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
+     //If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
         if (subtotal === 0) {
             document.getElementById('cart_info').innerHTML = `Is Empty!`;
             document.getElementById('cartSubmit').style.display = 'none';
@@ -128,18 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     
 
-    //If nothing has been added to the cart, hide the submit buttons and display 'Empty cart'
-    if (subtotal === 0) {
-        document.getElementById('cart_info').innerHTML = `Is Empty.`;
-        document.getElementById('cartSubmit').style.display = 'none';
-        document.getElementById('cartUpdate').style.display = 'none';
-
-        document.querySelector('#tax_info').innerHTML = '';
-    }
-    else {
-        document.getElementById('cartUpdate').style.display = 'none';
-    }
-})
 //document.getElementById('users').innerHTML = `Active users: ${users}`;
 
 // Function to safeguard against users inputting numbers greater than the inventory amt

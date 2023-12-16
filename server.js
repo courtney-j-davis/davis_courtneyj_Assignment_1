@@ -121,8 +121,8 @@ app.post('/process_login', function (request, response) {
 
     let POST = request.body;
     let entered_email = POST['email'].toLowerCase();
-    //let entered_password = POST['password'];
-    const storedHashedPassword = user_data[entered_email]?.password;
+    let entered_password = POST['password'];
+    
 //this means the text boxes are blank/
     if (entered_email.length === 0 && entered_password.length === 0) {
         request.query.loginErr = 'Email address & password are both required.';
@@ -174,6 +174,7 @@ app.post('/process_login', function (request, response) {
 });
 
 
+
 //modify for cookies
  
 app.post('/process_register', function (request, response) {
@@ -189,14 +190,14 @@ app.post('/process_register', function (request, response) {
 
     // NO ERRORS - server response
     if (Object.keys(registration_errors).length == 0) {
-        try {
+        
             // hash the password before storing
             const hashedPassword = hashPassword(reg_password);
 
             // make a new object in the user_data object
             user_data[reg_email] = {
                 "name": reg_name,
-                "password": hashedPassword,
+                "password": reg_password,
                 "status": true
             };
 
@@ -214,30 +215,26 @@ app.post('/process_register', function (request, response) {
                     response.redirect(`/login.html`);
                 }
             });
-        } catch (error) {
-            console.error('Error hashing password:', error);
-            // Handle the error, possibly redirect to an error page
+        
         }
-    } else {
+        else {
         // there are errors from validation and stored in registration_errors
         delete request.body.password;
         delete request.body.confirm_password;
 
         // stays the same for A3
-        let params = new URLSearchParams(Object.entries(request.body));
-        let redirectURL = `/register.html?${params.toString()}&${qs.stringify(registration_errors)}`;
+        let params = new URLSearchParams(request.body);
+        response.redirect = (`/register.html?${params.toString()}&${qs.stringify(registration_errors)}`);
 
-        // Redirect to the constructed URL
-        response.redirect(redirectURL);
+        
     }
-});
+})
 
 // Hashing function using the crypto module first which would unhash on the client side, Asked Chat and revised encryption to use bcrypt, fingers cross this works
-async function hashPassword(password) {
-    const saltRounds = 10;  //crypto.randomBytes(16).toString('hex');
-    const hashedPassword = await bycrypt.hash(password, saltRounds); //crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-    return hashedPassword//`${salt}$${hash}`;
-}
+  //crypto.randomBytes(16).toString('hex');
+  // crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+   // return `${salt}$${hash}`;
+
 
 //-----------EMAIL VALIDATION----------------//
 function validateEmail(email) {
@@ -332,7 +329,7 @@ function validateName(name) {
         //if the session cart does not exist
         if (!request.session.cart) {
             //creat one
-            request.session.car = [];
+            request.session.cart = [];
         }
     
         //if the session cart array for a product category does not exsit
@@ -387,8 +384,121 @@ app.post(`/checkout`, function(request, response){
     }
 })
 
+app.post('/complete_purchase', function (request, response) {
+    let cookie = JSON.parse(request.cookies['user_cookie']);
 
-   // If the passwords match, you can proceed with form submission or other actions
+    let email = cookie['email'];
+
+    let subtotal =0;
+    let total =0;
+
+    //Invoice table creation
+    let invoice_str = `
+        Thank you for you order!
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity Purchased</th>
+                        <th>Remaining Inventory</th>
+                        <th>Price</th>
+                        <th>Extended Price</th>
+                    </tr>
+                </thead>
+                </body>
+`;
+let shopping_cart = request.session.cart;
+//calculate quantity sold and inventory
+for (let products_key in products) {
+    for (let i in products[products_key]) {
+        //item has no quanity, its skipped over
+        if (typeof shopping_cart[products_key]== 'undefined') continue;
+
+        let qty = shopping_cart[products_key][i];
+
+        products[products_key][i].qty_sold += Number (qty);
+        products[products_key][i].qty_available -= Number (qty) || 0;
+   }
+}
+fs.writeFile(__dirname + '/products.json', JSON.stringify(products), 'utf-8', (err)=>{
+    if (err) {
+        console.error('error updating products data:' ,err);
+    } else {
+        console.log('Products data has been updated');
+    }
+});
+//This is to print invoice table in an email but I don't think I'm going to get that far, here's Sal's code just in case a miracle happens
+for (let products_key in products) {
+    for (let i in products[products_key]) {
+        if (typeof shopping_cart[products_key]== 'undefined') continue;
+
+        let qty = shopping_cart[products_key][i];
+        if (qty > 0){
+
+            let extended_price = qty * products[products_key][i].Price;
+            subtotal += extended_price;
+            invoice_str += `
+            <tr>
+                <td>${products[products_key][i].Make}</td>
+                <td>${products[products_key][i].Model}</td>
+                <td>${products[products_key][i].Year}</td>
+                <td>${qty}</td>
+                <td>${products[products_key][i].qty_available - qty}</td>
+                <td>${products[products_key][i].price.toFixed(2)}</td>
+                <td>$${extended_price}</td>
+            </td>
+            `;
+        }
+    }
+}
+//sales tax
+let tax_rate = (4.7/100);
+let tax_amt = subtotal * tax_rate;
+
+//shippping
+if (subtotal < 2000) {
+    shipping = 250;
+    shipping_display = `$${shipping.toFixed(2)}`;
+    total = Number(tax_amt + subtotal + shipping);
+}
+else if (subtotal >= 20000 && subtotal < 5000 ){
+    shipping = 100;
+    shipping_display = `$${shipping.toFixed(2)}`;
+    total = Number(tax_amt + subtotal + shipping);
+}
+else {
+    shipping = 0;
+    shipping_display = 'FREE';
+    total = Number(tax_amt + subtotal + shipping);
+}
+//add the rest of the invoice totals like subtotal
+invoice_str += `
+    <tr style="border-top: 2px solid black;">
+        <td colspan="4" style="text-align:center;">Sub-total</td>
+        <td>$${subtotal.toFixed(2)}</td>
+    </tr>
+    <tr>
+        <td colspan="4" style="text-align:center;">Tax @ ${Number(tax_rate)* 100}%</td>
+        <td>$${tax_amt.toFixed(2)}</td>
+    </tr>  
+    <tr>  
+        <td colspan="4" style="text-align:center;">Shipping</td>
+        <td>$${shipping_display}</td>
+    </tr> 
+    <tr>  
+        <td colspan="4" style="text-align:center;">b>Total</td>
+        <td>$${total.toFixed(2)}</td>
+    </tr> 
+    </tbody>
+    </table>
+ `;
+
+ request.session.destroy();//clear the cart (session cart)
+ response.send(invoice_str);
+
+})
+
+// If the passwords match, you can proceed with form submission or other actions
 
    //document.getElementById('register-form').submit();
    //update the total sold and quantity avalible 

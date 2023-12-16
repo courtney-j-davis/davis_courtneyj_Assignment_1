@@ -393,7 +393,7 @@ app.post(`/checkout`, function(request, response){
 app.post('/complete_purchase', function (request, response) {
     let cookie = JSON.parse(request.cookies['user_cookie']);
 
-    let emai = cookie['email'];
+    let email = cookie['email'];
 
     let subtotal =0;
     let total =0;
@@ -420,7 +420,7 @@ for (let products_key in products) {
         //item has no quanity, its skipped over
         if (typeof shopping_cart[products_key]== 'undefined') continue;
 
-        let qty = shopping_cart[products-key][i];
+        let qty = shopping_cart[products_key][i];
 
         products[products_key][i].qty_sold += Number (qty);
         products[products_key][i].qty_available -= Number (qty) || 0;
@@ -438,7 +438,7 @@ for (let products_key in products) {
     for (let i in products[products_key]) {
         if (typeof shopping_cart[products_key]== 'undefined') continue;
 
-        let qty = shopping_cart[products-key][i];
+        let qty = shopping_cart[products_key][i];
         if (qty > 0){
 
             let extended_price = qty * products[products_key][i].Price;
@@ -523,7 +523,7 @@ app.post('/process_logout', function (request, response){
                 if (err) {
                     console.error('Error updating user data:', err);
                 } else{
-                    console.log///follow up with the rest of the code. 
+                    
                 }
             })
         }
